@@ -1,0 +1,27 @@
+class PurchasesTranslations {  static const String kPurchases = 'purchases';
+  static const String kRefresh = 'refresh';
+  static const String kErrorLoading = 'error_loading_purchases';
+  static const String kStatistics = 'statistics';
+  static const String kTotalRequests = 'total_requests';
+  static const String kPendingRequests = 'pending_requests';
+  static const String kApprovedRequests = 'approved_requests';  static const String kRejectedRequests = 'rejected_requests';
+  static const String kSearchPurchases = 'search_purchases';
+  static const String kTotalValue = 'total_value';
+  static const String kRetry = 'retry';
+  static const String kStatusPending = 'status_pending';
+  static const String kStatusApproved = 'status_approved';
+  static const String kStatusRejected = 'status_rejected';
+  static const String kStatusCancelled = 'status_cancelled';
+  static const String kStatusCompleted = 'status_completed';
+  static const String kAll = 'all';
+  static const String kNoPurchases = 'no_purchases';
+  static const String kNoPendingPurchases = 'no_pending_purchases';
+  static const String kNoApprovedPurchases = 'no_approved_purchases';
+  static const String kNoRejectedPurchases = 'no_rejected_purchases';
+  static const String kSellerDetails = 'seller_details';
+  static const String kRequestInfo = 'request_info';
+  static const String kConfirmCancel = 'confirm_cancel';
+  static const String kConfirmCancelDesc = 'confirm_cancel_desc';
+  static const String kRequestCancelledSuccess = 'request_cancelled_success';
+  static const String kCannotCall = 'cannot_call';
+}
