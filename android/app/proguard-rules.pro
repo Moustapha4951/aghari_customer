@@ -11,6 +11,9 @@
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
 
+# Play Core
+-keep class com.google.android.play.core.** { *; }
+
 # Keep enums
 -keepclassmembers enum * {
     public static **[] values();
