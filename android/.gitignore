@@ -1,0 +1,25 @@
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+key.properties
+**/*.keystore
+**/*.jks
+
+# Signing keys
+android/key.properties
+*.jks
+
+# Firebase config files
+google-services.json
+GoogleService-Info.plist
+
+# Local configuration files
+.env
+.env.local
