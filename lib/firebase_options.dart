@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '568691371595',
     projectId: 'aghari-99356',
     storageBucket: 'aghari-99356.firebasestorage.app',
-    iosBundleId: 'com.example.aghariCustomer',
+    iosBundleId: 'com.aghari.customer',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '568691371595',
     projectId: 'aghari-99356',
     storageBucket: 'aghari-99356.firebasestorage.app',
-    iosBundleId: 'com.example.aghariCustomer',
+    iosBundleId: 'com.aghari.customer',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
