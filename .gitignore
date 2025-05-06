@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -16,9 +15,6 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
-
-# VS Code related
-.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -30,7 +26,6 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-**/build/
 
 # Symbolication related
 app.*.symbols
@@ -39,63 +34,9 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio will place build artifacts here
-**/android/app/debug
-**/android/app/profile
-**/android/app/release
+/android/app/debug
+/android/app/profile
+/android/app/release
 
-# iOS specific
-**/ios/**/*.mode1v3
-**/ios/**/*.mode2v3
-**/ios/**/*.moved-aside
-**/ios/**/*.pbxuser
-**/ios/**/*.perspectivev3
-**/ios/**/*sync/
-**/ios/**/.sconsign.dblite
-**/ios/**/.tags*
-**/ios/**/.vagrant/
-**/ios/**/DerivedData/
-**/ios/**/Icon?
-**/ios/**/Pods/
-**/ios/**/.symlinks/
-**/ios/**/profile
-**/ios/**/xcuserdata
-**/ios/.generated/
-**/ios/Flutter/App.framework
-**/ios/Flutter/Flutter.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/app.flx
-**/ios/Flutter/app.zip
-**/ios/Flutter/flutter_assets/
-**/ios/Flutter/flutter_export_environment.sh
-**/ios/ServiceDefinitions.json
-**/ios/Runner/GeneratedPluginRegistrant.*
-
-# macOS
-**/macos/Flutter/GeneratedPluginRegistrant.swift
-**/macos/Flutter/Flutter-Debug.xcconfig
-**/macos/Flutter/Flutter-Release.xcconfig
-**/macos/Flutter/Flutter-Profile.xcconfig
-
-# Coverage
-coverage/
-*.lcov
-.test_coverage.dart
-*.coverage.json
-*.info.json
-*.coveralls.json
-
-# Exceptions to the above rules
-!**/ios/**/default.mode1v3
-!**/ios/**/default.mode2v3
-!**/ios/**/default.pbxuser
-!**/ios/**/default.perspectivev3
-!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-!/dev/ci/**/Gemfile.lock
-
-# Firebase configuration files
-google-services.json
-GoogleService-Info.plist
-
-# Cursor specific directories
-.cursor/
+# تجاهل مجلد تطبيق الإدارة
+/aghari_admin/ 
