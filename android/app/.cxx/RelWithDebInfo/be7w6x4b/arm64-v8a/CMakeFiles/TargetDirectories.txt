@@ -1,2 +1,0 @@
-C:/Users/moust/Desktop/aghari_app/aghari_customer/android/app/.cxx/RelWithDebInfo/be7w6x4b/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/moust/Desktop/aghari_app/aghari_customer/android/app/.cxx/RelWithDebInfo/be7w6x4b/arm64-v8a/CMakeFiles/rebuild_cache.dir

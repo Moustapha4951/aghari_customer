@@ -1,4 +1,4 @@
-import 'package:aghari_customer/screens/properties/add_property_screen.dart';
+import '../../screens/properties/add_property_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/property_provider.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:aghari_customer/services/seller_request_service.dart';
-import 'package:aghari_customer/theme/app_theme.dart';
+import '../../services/seller_request_service.dart';
+import '../../theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'package:aghari_customer/providers/user_provider.dart';
-import 'package:aghari_customer/services/notification_service.dart';
-import 'package:aghari_customer/localization/app_localizations.dart';
+import '../../providers/user_provider.dart';
+import '../../services/notification_service.dart';
+import '../../localization/app_localizations.dart';
 
 class BecomeSellerScreen extends StatefulWidget {
   const BecomeSellerScreen({Key? key}) : super(key: key);

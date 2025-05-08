@@ -1,6 +1,4 @@
-import 'package:aghari_customer/models/property_model.dart';
-import 'package:aghari_customer/screens/profile/become_seller_screen.dart';
-import 'package:aghari_customer/screens/settings/settings_screen.dart';
+import 'models/property_model.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,7 +13,6 @@ import 'providers/property_provider.dart';
 import 'providers/property_request_provider.dart';
 import 'screens/properties/property_details_screen.dart';
 import 'screens/properties/property_list_screen.dart';
-import 'package:aghari_customer/services/notification_service.dart';
 import 'providers/property_purchase_provider.dart';
 import 'screens/purchases/purchases_screen.dart';
 import 'screens/profile/my_properties_screen.dart';
@@ -31,7 +28,9 @@ import 'providers/offer_provider.dart';
 import 'providers/language_provider.dart';
 import 'localization/app_localizations.dart';
 import 'providers/received_requests_provider.dart';
-
+import 'services/notification_service.dart';
+import 'screens/settings/settings_screen.dart';
+import 'screens/profile/become_seller_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

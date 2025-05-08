@@ -1,4 +1,4 @@
-import 'package:aghari_customer/providers/property_purchase_provider.dart';
+import '../providers/property_purchase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +6,7 @@ import '../models/user_model.dart';
 import 'package:provider/provider.dart';
 import '../providers/property_provider.dart';
 import '../providers/property_request_provider.dart';
-import 'package:aghari_customer/services/notification_service.dart';
+import '../services/notification_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

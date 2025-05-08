@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">568691371595</string>
+    <string name="google_api_key" translatable="false">AIzaSyDWkhvvv8pTWtRutM5cwMQEEiWJ9u1up1c</string>
+    <string name="google_app_id" translatable="false">1:568691371595:android:36d7c84084ce718e43a7ce</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDWkhvvv8pTWtRutM5cwMQEEiWJ9u1up1c</string>
+    <string name="google_storage_bucket" translatable="false">aghari-99356.firebasestorage.app</string>
+    <string name="project_id" translatable="false">aghari-99356</string>
+</resources>

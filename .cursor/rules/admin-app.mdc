@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# تطبيق Aghari الإداري
+
+تطبيق إدارة لوحة التحكم لنظام Aghari.
+
+## الشاشات الرئيسية
+
+تطبيق المسؤول يتضمن الشاشات التالية:
+
+- **auth/**: شاشات المصادقة (تسجيل الدخول، إنشاء حساب)
+- **dashboard/**: لوحة المعلومات الرئيسية
+- **properties/**: إدارة العقارات
+- **users/**: إدارة المستخدمين
+- **requests/**: إدارة طلبات المستخدمين
+- **offers/**: إدارة العروض
+- **cities/**: إدارة المدن
+- **districts/**: إدارة الأحياء
+- **seller_requests/**: إدارة طلبات البائعين
+- **purchases/**: إدارة عمليات الشراء
+- **password_reset_requests/**: إدارة طلبات إعادة تعيين كلمات المرور
+- **notifications/**: إدارة الإشعارات
+
+## الخدمات
+
+يستخدم التطبيق خدمات Firebase التالية:
+- Firebase Authentication للمصادقة
+- Cloud Firestore لتخزين البيانات
+- Firebase Storage لتخزين الملفات
+- Firebase Messaging للإشعارات

@@ -1,4 +1,4 @@
-import 'package:aghari_customer/localization/app_localizations.dart';
+import '../../localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/property_model.dart';

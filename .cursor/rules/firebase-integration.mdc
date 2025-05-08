@@ -1,0 +1,24 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# تكامل خدمات Firebase
+
+نظام Aghari يعتمد بشكل أساسي على خدمات Firebase.
+
+## الخدمات المستخدمة
+
+- **Firebase Authentication**: للمصادقة وإدارة المستخدمين
+- **Cloud Firestore**: قاعدة بيانات NoSQL لتخزين بيانات التطبيق
+- **Firebase Storage**: لتخزين الصور والملفات
+- **Firebase Messaging**: لإدارة وإرسال الإشعارات
+
+## هيكل مجلدات الخدمات
+
+مجلد `services/` في كل تطبيق يحتوي على ملفات الخدمات:
+
+- **auth_service.dart**: خدمة التحقق من الهوية
+- **firestore_service.dart**: خدمة قاعدة البيانات
+- **storage_service.dart**: خدمة تخزين الملفات
+- **messaging_service.dart**: خدمة الإشعارات

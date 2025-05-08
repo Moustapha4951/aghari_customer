@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
-import 'package:aghari_customer/providers/user_provider.dart';
-import 'package:aghari_customer/localization/app_localizations.dart';
+import '../../providers/user_provider.dart';
+import '../../localization/app_localizations.dart';
 import 'dart:math' as math; // إضافة مكتبة الرياضيات
 import 'package:shared_preferences/shared_preferences.dart'; // إضافة SharedPreferences
 import 'dart:convert'; // إضافة مكتبة تحويل JSON

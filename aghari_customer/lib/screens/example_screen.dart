@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:aghari_customer/localization/app_localizations.dart';
+import '../localization/app_localizations.dart';
 
 class ExampleScreen extends StatelessWidget {
   @override

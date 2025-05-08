@@ -1,6 +1,6 @@
-import 'package:aghari_customer/models/property_model.dart';
-import 'package:aghari_customer/services/seller_request_service.dart';
-import 'package:aghari_customer/widgets/custom_button.dart';
+import '../../models/property_model.dart';
+import '../../services/seller_request_service.dart';
+import '../../widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
