@@ -1,0 +1,67 @@
+version: 2.1
+
+jobs:
+  build-android:
+    docker:
+      - image: cimg/android:2023.08-flutter
+    steps:
+      - checkout
+      - restore_cache:
+          key: flutter-dependencies-{{ checksum "pubspec.lock" }}
+      - run:
+          name: Install Flutter dependencies
+          command: flutter pub get
+      - save_cache:
+          key: flutter-dependencies-{{ checksum "pubspec.lock" }}
+          paths:
+            - .dart_tool
+            - .pub-cache
+      - run:
+          name: Flutter analyze
+          command: flutter analyze
+      - run:
+          name: Flutter build APK
+          command: flutter build apk --release
+      - store_artifacts:
+          path: build/app/outputs/flutter-apk/app-release.apk
+          destination: app-release.apk
+
+  build-ios:
+    macos:
+      xcode: 15.0.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: flutter-dependencies-{{ checksum "pubspec.lock" }}
+      - restore_cache:
+          key: pods-{{ checksum "ios/Podfile.lock" }}
+      - run:
+          name: Install Flutter dependencies
+          command: flutter pub get
+      - run:
+          name: Install CocoaPods
+          command: |
+            cd ios
+            pod install
+      - save_cache:
+          key: flutter-dependencies-{{ checksum "pubspec.lock" }}
+          paths:
+            - .dart_tool
+            - .pub-cache
+      - save_cache:
+          key: pods-{{ checksum "ios/Podfile.lock" }}
+          paths:
+            - ios/Pods
+      - run:
+          name: Flutter build iOS
+          command: flutter build ios --release --no-codesign
+      - store_artifacts:
+          path: build/ios/iphoneos
+          destination: ios-build
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-android
+      - build-ios 
