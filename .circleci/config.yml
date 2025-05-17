@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install CocoaPods
+          command: sudo gem install cocoapods
+      - run:
           name: Install CocoaPods dependencies
           command: |
             cd ios
