@@ -9,6 +9,16 @@ jobs:
           name: Install CocoaPods
           command: sudo gem install cocoapods
       - run:
+          name: Install Flutter
+          command: |
+            git clone https://github.com/flutter/flutter.git --depth 1 -b stable
+            export PATH="$PATH:`pwd`/flutter/bin"
+      - run:
+          name: Install Dart and Flutter dependencies
+          command: |
+            export PATH="$PATH:`pwd`/flutter/bin"
+            flutter pub get
+      - run:
           name: Install CocoaPods dependencies
           command: |
             cd aghari_customer/ios
@@ -17,6 +27,7 @@ jobs:
       - run:
           name: Export development_id as DEVELOPMENT_TEAM and build
           command: |
+            export PATH="$PATH:`pwd`/flutter/bin"
             export DEVELOPMENT_TEAM="$development_id"
             xcodebuild -workspace aghari_customer/ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath aghari_customer/ios/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
 workflows:
