@@ -1,70 +1,29 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
-
-# Define jobs for building the Flutter application
 jobs:
-  build-android:
+  build:
     docker:
-      - image: cimg/android:2023.08-flutter
+      - image: cimg/xcode:latest
     steps:
       - checkout
       - restore_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
+          keys:
+            - cocoapods-cache-{{ checksum "aghari_customer/ios/Podfile" }}
+            - cocoapods-cache-
       - run:
-          name: Install Flutter dependencies
-          command: cd aghari_customer && flutter pub get
+          name: Install CocoaPods dependencies
+          command: cd aghari_customer/ios && pod install
       - save_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-          paths:
-            - aghari_customer/.dart_tool
-            - aghari_customer/.pub-cache
-      - run:
-          name: Flutter analyze
-          command: cd aghari_customer && flutter analyze
-      - run:
-          name: Flutter build APK
-          command: cd aghari_customer && flutter build apk --release
-      - store_artifacts:
-          path: aghari_customer/build/app/outputs/flutter-apk/app-release.apk
-          destination: app-release.apk
-
-  build-ios:
-    macos:
-      xcode: 15.0.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-      - restore_cache:
-          key: pods-{{ checksum "aghari_customer/ios/Podfile.lock" }}
-      - run:
-          name: Install Flutter dependencies
-          command: cd aghari_customer && flutter pub get
-      - run:
-          name: Install CocoaPods
-          command: |
-            cd aghari_customer/ios
-            pod install
-      - save_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-          paths:
-            - aghari_customer/.dart_tool
-            - aghari_customer/.pub-cache
-      - save_cache:
-          key: pods-{{ checksum "aghari_customer/ios/Podfile.lock" }}
           paths:
             - aghari_customer/ios/Pods
+          key: cocoapods-cache-{{ checksum "aghari_customer/ios/Podfile" }}
       - run:
-          name: Flutter build iOS
-          command: cd aghari_customer && flutter build ios --release --no-codesign
+          name: Build iOS app
+          command: cd aghari_customer/ios && xcodebuild -workspace aghari_customer.xcworkspace -scheme aghari_customer -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
       - store_artifacts:
-          path: aghari_customer/build/ios/iphoneos
+          path: aghari_customer/ios/build
           destination: ios-build
-
-# Orchestrate jobs using workflows
 workflows:
-  build-and-deploy:
+  version: 2
+  build_and_test:
     jobs:
-      - build-android
-      - build-ios
+      - build
