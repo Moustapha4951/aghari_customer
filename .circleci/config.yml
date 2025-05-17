@@ -13,8 +13,15 @@ jobs:
             source $BASH_ENV
             flutter --version
       - run:
+          name: Flutter Precache for iOS
+          command: |
+            source $BASH_ENV
+            flutter precache --ios
+      - run:
           name: Install Flutter dependencies
-          command: cd aghari_customer && flutter pub get
+          command: |
+            source $BASH_ENV
+            cd aghari_customer && flutter pub get
       - run:
           name: Install CocoaPods dependencies
           command: cd aghari_customer/ios && pod install
