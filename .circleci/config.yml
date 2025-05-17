@@ -1,21 +1,13 @@
 version: 2.1
 jobs:
   build:
-    docker:
-      - image: cimg/xcode:latest
+    macos:
+      xcode: 15.2.0
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - cocoapods-cache-{{ checksum "aghari_customer/ios/Podfile" }}
-            - cocoapods-cache-
       - run:
           name: Install CocoaPods dependencies
           command: cd aghari_customer/ios && pod install
-      - save_cache:
-          paths:
-            - aghari_customer/ios/Pods
-          key: cocoapods-cache-{{ checksum "aghari_customer/ios/Podfile" }}
       - run:
           name: Build iOS app
           command: cd aghari_customer/ios && xcodebuild -workspace aghari_customer.xcworkspace -scheme aghari_customer -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
