@@ -27,14 +27,33 @@ jobs:
           command: |
             cd aghari_customer/ios && pod install
       - run:
-          name: Build iOS app
+          name: Build iOS app for App Store
           command: |
-            cd aghari_customer/ios && xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+            cd aghari_customer/ios
+            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath $PWD/build/Runner.xcarchive
+      - run:
+          name: Export IPA for App Store
+          command: |
+            cd aghari_customer/ios
+            xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ipa
       - store_artifacts:
-          path: aghari_customer/ios/build
-          destination: ios-build
+          path: aghari_customer/ios/build/ipa
+          destination: ios-ipa
+      - run:
+          name: Install Fastlane
+          command: sudo gem install fastlane -NV
+      - run:
+          name: Upload to App Store Connect
+          command: |
+            cd aghari_customer/ios
+            fastlane pilot upload --ipa build/ipa/Runner.ipa --skip_waiting_for_build_processing true
+    environment:
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: $APP_SPECIFIC_PASSWORD
+      FASTLANE_USER: $APP_STORE_CONNECT_USER
+      FASTLANE_TEAM_ID: $APP_STORE_TEAM_ID
 workflows:
   version: 2
-  build_and_test:
+  build_and_upload:
     jobs:
-      - build
+      - build:
+          context: ios-appstore-credentials
