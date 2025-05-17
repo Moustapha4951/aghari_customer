@@ -27,13 +27,9 @@ jobs:
           command: |
             cd aghari_customer/ios && pod install
       - run:
-          name: List iOS directory contents
-          command: |
-            ls -la aghari_customer/ios
-      - run:
           name: Build iOS app
           command: |
-            cd aghari_customer/ios && xcodebuild -workspace aghari_customer.xcworkspace -scheme aghari_customer -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+            cd aghari_customer/ios && xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
       - store_artifacts:
           path: aghari_customer/ios/build
           destination: ios-build
