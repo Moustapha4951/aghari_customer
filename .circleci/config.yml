@@ -1,59 +1,43 @@
 version: 2.1
-jobs:
-  build:
+executors:
+  macos-executor:
     macos:
       xcode: 15.2.0
+    resource_class: macos.m1.medium
+    working_directory: ~/project
+jobs:
+  build_ios:
+    executor: macos-executor
     steps:
       - checkout
       - run:
-          name: Install Flutter
+          name: Install dependencies
           command: |
-            git clone https://github.com/flutter/flutter.git -b stable --depth 1 ~/flutter
-            echo 'export PATH="$HOME/flutter/bin:$PATH"' >> $BASH_ENV
-            source $BASH_ENV
-            flutter --version
+            cd aghari_customer
+            flutter pub get
+            cd ios
+            pod install
       - run:
-          name: Flutter Precache for iOS
-          command: |
-            source $BASH_ENV
-            flutter precache --ios
-      - run:
-          name: Install Flutter dependencies
-          command: |
-            source $BASH_ENV
-            cd aghari_customer && flutter pub get
-      - run:
-          name: Install CocoaPods dependencies
-          command: |
-            cd aghari_customer/ios && pod install
-      - run:
-          name: Build iOS app for App Store
+          name: Build iOS archive
           command: |
             cd aghari_customer/ios
-            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath $PWD/build/Runner.xcarchive
+            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath $PWD/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
       - run:
-          name: Export IPA for App Store
+          name: Export IPA
           command: |
             cd aghari_customer/ios
-            xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ipa
-      - store_artifacts:
-          path: aghari_customer/ios/build/ipa
-          destination: ios-ipa
+            xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath $PWD/build/ipa
       - run:
           name: Install Fastlane
-          command: sudo gem install fastlane -NV
+          command: sudo gem install fastlane
       - run:
-          name: Upload to App Store Connect
+          name: Upload IPA to App Store Connect
           command: |
             cd aghari_customer/ios
-            fastlane pilot upload --ipa build/ipa/Runner.ipa --skip_waiting_for_build_processing true
-    environment:
-      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: $APP_SPECIFIC_PASSWORD
-      FASTLANE_USER: $APP_STORE_CONNECT_USER
-      FASTLANE_TEAM_ID: $APP_STORE_TEAM_ID
+            fastlane pilot upload -u "$APP_STORE_CONNECT_USERNAME" -i build/ipa/Runner.ipa
 workflows:
   version: 2
   build_and_upload:
     jobs:
-      - build:
-          context: ios-appstore-credentials
+      - build_ios:
+          context: developer_Id
