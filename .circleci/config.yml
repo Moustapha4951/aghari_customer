@@ -32,10 +32,12 @@ jobs:
             pod install
             cd ../..
       - run:
-          name: Export development_id as DEVELOPMENT_TEAM and build
+          name: Build iOS Archive (DEVELOPMENT_TEAM required)
           command: |
             export PATH="$PATH:`pwd`/flutter/bin"
-            export DEVELOPMENT_TEAM="$development_id"
+            if [ -z "$DEVELOPMENT_TEAM" ]; then
+              echo "Error: DEVELOPMENT_TEAM environment variable is not set. Please set this in your CircleCI project or context." && exit 1
+            fi
             xcodebuild -workspace aghari_customer/ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath aghari_customer/ios/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
 workflows:
   version: 2
