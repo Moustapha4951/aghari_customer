@@ -24,10 +24,16 @@ jobs:
             cd aghari_customer && flutter pub get
       - run:
           name: Install CocoaPods dependencies
-          command: cd aghari_customer/ios && pod install
+          command: |
+            cd aghari_customer/ios && pod install
+      - run:
+          name: List iOS directory contents
+          command: |
+            ls -la aghari_customer/ios
       - run:
           name: Build iOS app
-          command: cd aghari_customer/ios && xcodebuild -workspace aghari_customer.xcworkspace -scheme aghari_customer -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          command: |
+            cd aghari_customer/ios && xcodebuild -workspace aghari_customer.xcworkspace -scheme aghari_customer -sdk iphoneos -configuration Release clean build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
       - store_artifacts:
           path: aghari_customer/ios/build
           destination: ios-build
