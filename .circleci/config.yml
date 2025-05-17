@@ -1,5 +1,4 @@
 version: 2.1
-# Only the failing iOS build job is updated
 jobs:
   build-ios:
     macos:
@@ -7,10 +6,16 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Export development_id as DEVELOPMENT_TEAM
+          name: Install CocoaPods dependencies
+          command: |
+            cd ios
+            pod install
+            cd ..
+      - run:
+          name: Export development_id as DEVELOPMENT_TEAM and build
           command: |
             export DEVELOPMENT_TEAM="$development_id"
-            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath ios/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
+            xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath ios/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
 workflows:
   version: 2
   build:
