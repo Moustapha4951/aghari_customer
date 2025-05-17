@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Flutter dependencies
+          command: cd aghari_customer && flutter pub get
+      - run:
           name: Install CocoaPods dependencies
           command: cd aghari_customer/ios && pod install
       - run:
