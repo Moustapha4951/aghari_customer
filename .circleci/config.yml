@@ -14,6 +14,12 @@ jobs:
             git clone https://github.com/flutter/flutter.git --depth 1 -b stable
             export PATH="$PATH:`pwd`/flutter/bin"
       - run:
+          name: Precache Flutter iOS artifacts
+          command: |
+            export PATH="$PATH:`pwd`/flutter/bin"
+            cd aghari_customer
+            flutter precache --ios
+      - run:
           name: Install Dart and Flutter dependencies
           command: |
             export PATH="$PATH:`pwd`/flutter/bin"
