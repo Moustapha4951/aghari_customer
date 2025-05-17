@@ -1,43 +1,18 @@
 version: 2.1
-executors:
-  macos-executor:
-    macos:
-      xcode: 15.2.0
-    resource_class: macos.m1.medium
-    working_directory: ~/project
+# Only the failing iOS build job is updated
 jobs:
-  build_ios:
-    executor: macos-executor
+  build-ios:
+    macos:
+      xcode: "15.2.0"
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Export development_id as DEVELOPMENT_TEAM
           command: |
-            cd aghari_customer
-            flutter pub get
-            cd ios
-            pod install
-      - run:
-          name: Build iOS archive
-          command: |
-            cd aghari_customer/ios
-            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath $PWD/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
-      - run:
-          name: Export IPA
-          command: |
-            cd aghari_customer/ios
-            xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath $PWD/build/ipa
-      - run:
-          name: Install Fastlane
-          command: sudo gem install fastlane
-      - run:
-          name: Upload IPA to App Store Connect
-          command: |
-            cd aghari_customer/ios
-            fastlane pilot upload -u "$APP_STORE_CONNECT_USERNAME" -i build/ipa/Runner.ipa
+            export DEVELOPMENT_TEAM="$development_id"
+            xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release clean archive -archivePath ios/build/Runner.xcarchive DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
 workflows:
   version: 2
-  build_and_upload:
+  build:
     jobs:
-      - build_ios:
-          context: developer_Id
+      - build-ios
