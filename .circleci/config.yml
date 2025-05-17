@@ -6,6 +6,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Print Environment Variables (Debug)
+          command: |
+            echo "DEVELOPMENT_TEAM is: $DEVELOPMENT_TEAM"
+      - run:
           name: Install CocoaPods
           command: sudo gem install cocoapods
       - run:
