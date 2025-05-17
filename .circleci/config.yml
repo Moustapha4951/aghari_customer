@@ -17,6 +17,7 @@ jobs:
           name: Install Dart and Flutter dependencies
           command: |
             export PATH="$PATH:`pwd`/flutter/bin"
+            cd aghari_customer
             flutter pub get
       - run:
           name: Install CocoaPods dependencies
