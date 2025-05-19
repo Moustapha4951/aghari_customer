@@ -22,7 +22,7 @@ jobs:
             bundle init || true
             echo 'gem "fastlane"' >> Gemfile
             bundle install
-            fastlane init --non-interactive --app_identifier com.aghari.customer --platform ios --skip_docs
+            fastlane init --app_identifier com.aghari.customer --platform ios --skip_docs
       - run:
           name: Build and upload to App Store Connect
           command: bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
