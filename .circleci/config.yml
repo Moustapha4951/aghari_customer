@@ -22,8 +22,8 @@ jobs:
             bundle init || true
             echo 'gem "fastlane"' >> Gemfile
             bundle install
-            # Use interactive init only, without --app_identifier
-            yes "" | fastlane init --platform ios --skip_docs
+            # Use interactive init only, no unsupported options
+            yes "" | fastlane init --skip_docs
       - run:
           name: Build and upload to App Store Connect
           command: bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
