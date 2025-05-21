@@ -21,11 +21,11 @@ jobs:
           command: fastlane --version
       - run:
           name: Echo Fastlane init command
-          command: echo 'yes "" | fastlane init --skip_docs'
+          command: echo 'yes "" | fastlane init'
       - run:
           name: Set up Fastlane
           command: |
-            yes "" | fastlane init --skip_docs
+            yes "" | fastlane init
       - run:
           name: Build and upload to App Store Connect
           command: bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
