@@ -14,23 +14,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Change to aghari_customer directory
-          command: cd aghari_customer && pwd && ls
+          name: Change to iOS project directory
+          command: cd aghari_customer/ios && pwd && ls
       - run:
           name: Install Fastlane
-          command: cd aghari_customer && sudo gem install fastlane -NV
+          command: cd aghari_customer/ios && sudo gem install fastlane -NV
       - run:
           name: Print Fastlane version
-          command: cd aghari_customer && fastlane --version
+          command: cd aghari_customer/ios && fastlane --version
       - run:
           name: Set up Fastlane in Xcode project directory
           command: |
-            cd aghari_customer
+            cd aghari_customer/ios
             yes "" | fastlane init
       - run:
           name: Build and upload to App Store Connect
           command: |
-            cd aghari_customer
+            cd aghari_customer/ios
             bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
 workflows:
   version: 2
