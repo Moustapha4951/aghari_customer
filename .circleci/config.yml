@@ -17,12 +17,14 @@ jobs:
           name: Install Fastlane
           command: sudo gem install fastlane -NV
       - run:
+          name: Print Fastlane version
+          command: fastlane --version
+      - run:
+          name: Echo Fastlane init command
+          command: echo 'yes "" | fastlane init --skip_docs'
+      - run:
           name: Set up Fastlane
           command: |
-            bundle init || true
-            echo 'gem "fastlane"' >> Gemfile
-            bundle install
-            # Use interactive init only, no unsupported options
             yes "" | fastlane init --skip_docs
       - run:
           name: Build and upload to App Store Connect
