@@ -22,7 +22,7 @@ jobs:
             bundle init || true
             echo 'gem "fastlane"' >> Gemfile
             bundle install
-            # Remove --app_identifier and use interactive init
+            # Use interactive init only, without --app_identifier
             yes "" | fastlane init --platform ios --skip_docs
       - run:
           name: Build and upload to App Store Connect
