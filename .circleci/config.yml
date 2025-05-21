@@ -14,31 +14,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Locate Xcode project
-          command: |
-            PROJECT_PATH=$(find . -type d -name '*.xcodeproj' -print -quit | xargs dirname)
-            if [ -z "$PROJECT_PATH" ]; then
-              echo "No Xcode project found. Exiting." && exit 1
-            fi
-            echo "Found Xcode project in: $PROJECT_PATH"
-            echo "PROJECT_PATH=$PROJECT_PATH" >> $BASH_ENV
+          name: Change to aghari_customer directory
+          command: cd aghari_customer && pwd && ls
       - run:
           name: Install Fastlane
-          command: sudo gem install fastlane -NV
+          command: cd aghari_customer && sudo gem install fastlane -NV
       - run:
           name: Print Fastlane version
-          command: fastlane --version
+          command: cd aghari_customer && fastlane --version
       - run:
           name: Set up Fastlane in Xcode project directory
           command: |
-            source $BASH_ENV
-            cd "$PROJECT_PATH"
+            cd aghari_customer
             yes "" | fastlane init
       - run:
           name: Build and upload to App Store Connect
           command: |
-            source $BASH_ENV
-            cd "$PROJECT_PATH"
+            cd aghari_customer
             bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
 workflows:
   version: 2
