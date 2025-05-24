@@ -1,0 +1,78 @@
+# Codemagic build configuration
+# This is a template, please review and customize it for your project.
+
+workflows:
+  ios-release-build: # You can name your workflow
+    name: iOS Release Build and Publish
+    #instance_type: mac_mini_m1 # Or another instance type if needed
+    #max_build_duration: 60 # In minutes
+
+    environment:
+      flutter: stable # Or specify a version e.g., 3.19.0
+      xcode: latest # Or specify a version e.g., 15.2
+      cocoapods: default
+      # Add group for App Store Connect API Key if you use Codemagic's publish_to_app_store_connect step
+      # groups:
+      #   - app_store_credentials # Create this group in Codemagic UI & add APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_PRIVATE_KEY
+      # Add group for iOS code signing files if you store them as environment variables
+      #   - ios_signing_credentials # And add CM_CERTIFICATE, CM_CERTIFICATE_PASSWORD, CM_PROVISIONING_PROFILE
+
+    scripts:
+      - name: Set working directory to Flutter project
+        script: |
+          echo "Changing working directory to aghari_customer"
+          cd aghari_customer
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Generate launcher icons
+        script: |
+          echo "Generating app icons..."
+          flutter pub run flutter_launcher_icons
+          echo "Icon generation complete."
+      - name: Build IPA
+        script: |
+          echo "Starting IPA build..."
+          # Ensure your scheme is 'Runner' and configuration is 'Release' if using xcode-project use-profiles
+          # For manual signing with environment variables:
+          flutter build ipa --release \
+            --export-options-plist="ios/ExportOptions.plist"
+          # If using Codemagic's automatic code signing with App Store Connect distribution type:
+          # flutter build ipa --release \
+          #   --export-method=app-store \
+          #   --export-options-plist="ios/ExportOptions.plist" # Ensure this plist is compatible
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM # For crash reporting
+
+    publishing:
+      # This is a conceptual placeholder for App Store Connect publishing.
+      # You had this working in your logs, so you'll need to replicate that setup.
+      # It might involve Codemagic's built-in step or your custom script.
+      # Example using Codemagic's built-in step (requires 'app_store_credentials' group from environment):
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY      # Provided as an environment variable
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER    # Provided as an environment variable
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID      # Provided as an environment variable
+        # bundle_id: "com.aghari.customer" # Optional, usually inferred
+        # submit_to_testflight: true # Or false if you want to submit to App Store directly (after manual version setup)
+        # beta_groups: # Optional: Specify TestFlight beta groups
+        #   - "Your Beta Group Name"
+      # If you used a custom script for publishing (like your log showed 'app-store-connect publish ...'),
+      # you would put that script here, ensuring environment variables for key_id, issuer_id, and private_key are set.
+      # For example:
+      # scripts:
+      #   - name: Publish to App Store Connect (Custom Script)
+      #     script: |
+      #       echo "Publishing to App Store Connect using custom script..."
+      #       # Ensure APP_STORE_CONNECT_PUBLISHER_PRIVATE_KEY, etc. are available as Codemagic env vars
+      #       app-store-connect publish --path $CM_ARTIFACT_LINKS[0] \ # Assuming first artifact is the IPA
+      #         --key-id YOUR_KEY_ID_HERE_OR_ENV_VAR \
+      #         --issuer-id YOUR_ISSUER_ID_HERE_OR_ENV_VAR \
+      #         --private-key @env:YOUR_PRIVATE_KEY_ENV_VAR_NAME
+      #         # The @env: prefix is specific to how some tools read env vars. Adjust as needed.
+
+# More workflows can be added for different purposes (e.g., testing, android builds)
+# For detailed configuration options, refer to Codemagic's documentation:
+# https://docs.codemagic.io/getting-started/codemagic-yaml/
