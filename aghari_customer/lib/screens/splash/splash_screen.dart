@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
         
       } else {
         // المستخدم غير مسجل، توجيهه إلى شاشة تسجيل الدخول
-        if (mounted) Navigator.pushReplacementNamed(context, '/login');
+        if (mounted) Navigator.pushReplacementNamed(context, '/welcome');
       }
     } catch (e) {
       print('خطأ في فحص حالة المستخدم: $e');

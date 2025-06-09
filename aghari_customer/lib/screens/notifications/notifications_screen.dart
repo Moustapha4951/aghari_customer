@@ -112,21 +112,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ],
       ),
-      body: _buildBody(),
+      body: _buildBody(localizations), // Pass localizations
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations localizations) { // Accept localizations
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
+      // Check if the error message is the specific one for needing login
+      // The current message is: 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.'
+      bool needsLogin = _errorMessage == 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.';
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            Icon(needsLogin ? Icons.login : Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
             Text(
               _errorMessage!,
@@ -134,10 +137,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               style: const TextStyle(color: Colors.red),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadNotifications,
-              child: const Text('إعادة المحاولة'),
-            ),
+            if (needsLogin)
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                icon: const Icon(Icons.login),
+                label: Text(localizations.translate('login')), // Assuming 'login' key exists
+              )
+            else
+              ElevatedButton(
+                onPressed: _loadNotifications,
+                child: Text(localizations.translate('retry')), // Assuming 'retry' key exists
+              ),
           ],
         ),
       );
@@ -255,7 +267,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildEmptyState() {
-    final localizations = AppLocalizations.of(context);
+    // localizations is already available in build method, if needed here, it should be passed.
+    // For now, assuming it's not directly needed or accessed via AppLocalizations.of(context)
+    final localizations = AppLocalizations.of(context); // Added to ensure it's available if used by original code
 
     return Center(
       child: Column(

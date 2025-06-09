@@ -24,6 +24,7 @@ class _PurchasesScreenState extends State<PurchasesScreen>
   bool _isLoading = false;
   bool _hasError = false;
   String? _errorMessage;
+  bool _isGuestUser = false; // Added state variable
 
   // المشتريات مصنفة حسب الحالة
   List<PropertyPurchaseModel> _allPurchases = [];
@@ -106,6 +107,32 @@ class _PurchasesScreenState extends State<PurchasesScreen>
 
   Widget _buildBody(BuildContext context) {
     final localizations = AppLocalizations.of(context);
+
+    if (_isGuestUser) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.login, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              // Using hardcoded string as per instructions, localization key 'login_to_view_purchases' to be added later
+              "Please log in to view your purchases.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              icon: const Icon(Icons.login),
+              label: Text(localizations.translate('login')), // Existing key
+            ),
+          ],
+        ),
+      );
+    }
 
     if (_isLoading && _allPurchases.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -592,6 +619,7 @@ class _PurchasesScreenState extends State<PurchasesScreen>
       _isLoading = true;
       _hasError = false;
       _errorMessage = null;
+      _isGuestUser = false; // Reset guest status
     });
 
     try {
@@ -605,8 +633,12 @@ class _PurchasesScreenState extends State<PurchasesScreen>
       await userProvider.checkUserSession();
 
       if (userProvider.currentUser == null) {
-        print('❌ المستخدم غير مسجل الدخول');
-        throw Exception('المستخدم غير مسجل دخول');
+        print('👤 المستخدم غير مسجل الدخول - عرض شاشة الضيف');
+        setState(() {
+          _isLoading = false;
+          _isGuestUser = true;
+        });
+        return; // Return early, do not proceed to fetch purchases
       }
 
       // استخدام معرف المستخدم من UserProvider

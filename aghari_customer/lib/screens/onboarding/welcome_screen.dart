@@ -5,9 +5,27 @@ import 'package:provider/provider.dart';
 import '../../providers/language_provider.dart';
 import '../../localization/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../providers/user_provider.dart'; // Added import
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
+
+  // Added helper method
+  void _navigateToProtectedScreen(BuildContext context, String routeName) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (userProvider.currentUser == null) {
+      // User is not logged in, navigate to login screen
+      Navigator.pushNamed(context, '/login');
+    } else {
+      // User is logged in, proceed to the intended route
+      if (routeName == '/request-property') {
+        // Special case for _goToHome which uses pushReplacementNamed and arguments
+        Navigator.pushReplacementNamed(context, routeName, arguments: {'from_welcome': true});
+      } else {
+        Navigator.pushNamed(context, routeName);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +148,7 @@ class WelcomeScreen extends StatelessWidget {
                 AppLocalizations.of(context).translate('become_agent'),
                 AppLocalizations.of(context)
                     .translate('become_agent_description'),
-                onTap: () => Navigator.pushNamed(context, '/become-seller'),
+                onTap: () => _navigateToProtectedScreen(context, '/become-seller'), // Modified onTap
               ),
 
               const SizedBox(height: 40),
@@ -253,8 +271,7 @@ class WelcomeScreen extends StatelessWidget {
 
   // دالة للانتقال إلى شاشة طلب العقار
   void _goToHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/request-property',
-        arguments: {'from_welcome': true});
+    _navigateToProtectedScreen(context, '/request-property'); // Modified to use helper
   }
 
   // تغيير دالة التخطي لتوجه المستخدم إلى شاشة العروض
