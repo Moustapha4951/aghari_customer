@@ -108,33 +108,10 @@ class _PurchasesScreenState extends State<PurchasesScreen>
   Widget _buildBody(BuildContext context) {
     final localizations = AppLocalizations.of(context);
 
-    if (_isGuestUser) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.login, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              // Using hardcoded string as per instructions, localization key 'login_to_view_purchases' to be added later
-              "Please log in to view your purchases.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              icon: const Icon(Icons.login),
-              label: Text(localizations.translate('login')), // Existing key
-            ),
-          ],
-        ),
-      );
-    }
+    // Removed the initial _isGuestUser check that returned a simple centered message.
+    // The main UI structure will now always be built.
 
-    if (_isLoading && _allPurchases.isEmpty) {
+    if (_isLoading && _allPurchases.isEmpty && !_isGuestUser) { // Ensure guest mode doesn't show loading for empty allPurchases
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -174,8 +151,8 @@ class _PurchasesScreenState extends State<PurchasesScreen>
 
         // قائمة الطلبات
         Expanded(
-          child: _displayedPurchases.isEmpty
-              ? _buildEmptyState()
+          child: _displayedPurchases.isEmpty && !_isLoading // Also check !_isLoading here to prevent showing empty state during load
+              ? _buildEmptyState(localizations, _isGuestUser) // Pass localizations and _isGuestUser
               : _buildPurchasesList(),
         ),
       ],
@@ -370,45 +347,60 @@ class _PurchasesScreenState extends State<PurchasesScreen>
     );
   }
 
-  Widget _buildEmptyState() {
-    final localizations = AppLocalizations.of(context);
-
-    String message;
-    switch (_tabController.index) {
-      case 1:
-        message = localizations.translate('no_pending_purchases');
-        break;
-      case 2:
-        message = localizations.translate('no_approved_purchases');
-        break;
-      case 3:
-        message = localizations.translate('no_rejected_purchases');
-        break;
-      default:
-        message = localizations.translate('no_purchases');
+  Widget _buildEmptyState(AppLocalizations localizations, bool isGuestUser) { // Modified signature
+    if (isGuestUser) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.login, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                "Log in to view and track your purchases.", // Hardcoded: localizations.translate('purchases_guest_prompt'),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              icon: const Icon(Icons.login),
+              label: Text(localizations.translate('login')), // Existing key
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Existing logic for logged-in user with no purchases
+      String message;
+      switch (_tabController.index) {
+        case 1: message = localizations.translate('no_pending_purchases'); break;
+        case 2: message = localizations.translate('no_approved_purchases'); break;
+        case 3: message = localizations.translate('no_rejected_purchases'); break;
+        default: message = localizations.translate('no_purchases');
+      }
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.receipt_long, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
     }
-
-    return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-            Icons.receipt_long,
-            size: 64,
-            color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-            message,
-                    style: TextStyle(
-              fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildPurchasesList() {

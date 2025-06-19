@@ -4,6 +4,7 @@ import '../../providers/property_provider.dart';
 import '../../widgets/property_list.dart';
 import '../../localization/app_localizations.dart';
 import '../../providers/user_provider.dart';
+import '../../models/property_model.dart'; // Added import
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({Key? key}) : super(key: key);
@@ -14,6 +15,8 @@ class FavoritesScreen extends StatefulWidget {
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
   bool _isLoading = false;
+  bool _isGuestMode = false; // Added state variable
+  List<PropertyModel> _guestProperties = []; // Added state variable
 
   @override
   void initState() {
@@ -25,6 +28,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   Future<void> _checkUserAndLoadFavorites() async {
     setState(() {
       _isLoading = true;
+      _isGuestMode = false; // Reset guest mode
     });
 
     try {
@@ -36,10 +40,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       await userProvider.checkUserSession();
 
       if (userProvider.currentUser == null) {
-        print('⚠️ لا يوجد مستخدم مسجل للدخول، لا يمكن تحميل المفضلة');
-        setState(() {
-          _isLoading = false;
-        });
+        print('⚠️ Guest user on Favorites screen, loading guest properties...');
+        // No longer just return; call _loadGuestProperties instead.
+        _loadGuestProperties(); // Call the new method
         return;
       }
 
@@ -92,6 +95,34 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     }
   }
 
+  // Method to load properties for guest users
+  Future<void> _loadGuestProperties() async {
+    setState(() {
+      _isLoading = true;
+      _isGuestMode = true;
+    });
+    try {
+      final propertyProvider = Provider.of<PropertyProvider>(context, listen: false);
+      // Ensure properties are fetched if not already available or if a fresh list is desired for guests
+      await propertyProvider.fetchProperties();
+      if (mounted) {
+        setState(() {
+          // Take a limited number of properties for display, e.g., first 6.
+          _guestProperties = propertyProvider.properties.take(6).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('❌ Error loading guest properties: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          // Optionally handle error state for guest properties if needed
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
@@ -134,37 +165,51 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
             if (_isLoading)
               const Center(child: CircularProgressIndicator())
-            else if (userProvider.currentUser == null)
-              // عرض رسالة لتسجيل الدخول
-              Center(
+            // New block for guest mode
+            else if (_isGuestMode)
+              Expanded( // Make sure this Column takes available space
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.account_circle,
-                      size: 80,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'يجب تسجيل الدخول لعرض المفضلة',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Explore Properties", // Hardcoded: localizations.translate('explore_properties_title'),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      icon: Icon(Icons.login),
-                      label: Text('تسجيل الدخول'),
+                    if (_guestProperties.isEmpty && !_isLoading)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text("No properties found to display at the moment."), // Hardcoded: localizations.translate('no_properties_found')),
+                      )
+                    else
+                      Expanded(
+                        child: PropertyList(
+                          properties: _guestProperties,
+                          showFavoriteButton: false, // Explicitly false for guest view
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Text("Log in to save your favorites!"), // Hardcoded: localizations.translate('login_for_favorites_prompt')),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                            icon: const Icon(Icons.login),
+                            label: Text(localizations.translate('login')), // Existing key
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               )
-            else
+            // Existing block for logged-in users
+            else if (userProvider.currentUser != null)
               Expanded(
                 child: Consumer<PropertyProvider>(
                   builder: (context, propertyProvider, child) {

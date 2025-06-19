@@ -16,6 +16,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _notifications = [];
   String? _errorMessage;
+  bool _isGuestMode = false; // Added state variable
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _isGuestMode = false; // Reset guest mode
     });
 
     try {
@@ -35,7 +37,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       if (userId == null) {
         setState(() {
-          _errorMessage = 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.';
+          // _errorMessage = 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.'; // Remove this line
+          _isGuestMode = true; // Set guest mode
           _isLoading = false;
         });
         return;
@@ -121,41 +124,68 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_errorMessage != null) {
-      // Check if the error message is the specific one for needing login
-      // The current message is: 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.'
-      bool needsLogin = _errorMessage == 'لا يمكن تحميل الإشعارات. الرجاء تسجيل الدخول أولاً.';
+    // New _isGuestMode check
+    else if (_isGuestMode) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(needsLogin ? Icons.login : Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
+            Icon(Icons.notifications_none_outlined, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 24),
             Text(
-              _errorMessage!,
+              "Stay Updated!", // Hardcoded: localizations.translate('notifications_guest_title'),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey[700]),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
             ),
-            const SizedBox(height: 16),
-            if (needsLogin)
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-                icon: const Icon(Icons.login),
-                label: Text(localizations.translate('login')), // Assuming 'login' key exists
-              )
-            else
-              ElevatedButton(
-                onPressed: _loadNotifications,
-                child: Text(localizations.translate('retry')), // Assuming 'retry' key exists
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Text(
+                "Log in to receive personal notifications and updates.", // Hardcoded: localizations.translate('notifications_guest_description'),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              icon: const Icon(Icons.login),
+              label: Text(localizations.translate('login')), // Existing key
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              ),
+            ),
           ],
         ),
       );
     }
 
-    if (_notifications.isEmpty) {
+    // Simplified _errorMessage block (no longer needs needsLogin check)
+    else if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage!, // Display the actual error
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadNotifications, // Retry loading
+              child: Text(localizations.translate('retry')),
+            ),
+          ],
+        ),
+      );
+    }
+
+    else if (_notifications.isEmpty) {
       return _buildEmptyState();
     }
 
