@@ -393,7 +393,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   // إضافة دالة لتعيين بيانات المستخدم الحالي من خدمة المصادقة
-  void setCurrentUser(Map<String, dynamic> userData) async {
+  Future<void> setCurrentUser(Map<String, dynamic> userData) async { // Changed signature to Future<void>
     try {
       // تحويل البيانات إلى نموذج المستخدم
       _currentUser = UserModel(

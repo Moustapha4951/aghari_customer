@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Provider.of<UserProvider>(context, listen: false);
 
             // تعيين المستخدم الحالي في مزود المستخدم
-            userProvider.setCurrentUser(userData);
+            await userProvider.setCurrentUser(userData); // Added await
             print('✅ تم تعيين المستخدم في UserProvider');
 
             // مشاركة معرف المستخدم مع المزودين الآخرين بشكل آمن
