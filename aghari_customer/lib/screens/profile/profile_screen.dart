@@ -27,14 +27,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProvider _userProvider;
+  // late UserProvider _userProvider; // Removed
   late PropertyRequestService _propertyRequestService;
   late SellerRequestService _sellerRequestService;
 
   @override
   void initState() {
     super.initState();
-    _userProvider = Provider.of<UserProvider>(context, listen: false);
+    // _userProvider = Provider.of<UserProvider>(context, listen: false); // Removed
     _propertyRequestService = PropertyRequestService();
     _sellerRequestService = SellerRequestService();
   }
@@ -42,30 +42,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
-    final user = _userProvider.currentUser;
+    // Get UserProvider with listening enabled
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.currentUser;
+
+    // The route guard in main.dart should prevent ProfileScreen from being built if user is null.
+    // However, adding a null check here for safety during transition or unexpected states.
+    if (user == null) {
+      // This should ideally not be reached if the route guard is working.
+      // It might indicate a brief moment where user becomes null while widget is still in tree.
+      return Scaffold(
+        appBar: AppBar(title: Text(localizations.translate('profile'))),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.translate('profile')),
       ),
       body: SafeArea(
-        child: user == null
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(localizations
-                        .translate('please_login_to_view_profile')),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/login'),
-                      child: Text(localizations.translate('login')),
-                    ),
-                  ],
-                ),
-              )
-          : SingleChildScrollView(
+        // Removed user == null check here, body is now directly the SingleChildScrollView
+        child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
@@ -297,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     FutureBuilder<List<PropertyRequestModel>>(
                       future: _propertyRequestService
-                          .getUserRequests(_userProvider.currentUser!.id),
+                          .getUserRequests(user.id), // Use user.id directly
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -347,9 +345,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
 
                           if (confirmed == true) {
-                          await _userProvider.logout();
+                          await userProvider.logout(); // Use userProvider from build context
                             if (mounted) {
-                            Navigator.pushReplacementNamed(context, '/login');
+                            // Navigation is handled by the Consumer in main.dart reacting to logout
+                            // No explicit navigation needed here, or ensure it aligns with router logic
+                            // For now, let UserProvider notify and Consumer handle redirection.
+                            // Navigator.pushReplacementNamed(context, '/login'); // Commented out or removed
                           }
                         }
                       },

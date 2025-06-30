@@ -134,14 +134,16 @@ class MyApp extends StatelessWidget {
             '/purchases': (context) => const PurchasesScreen(),
             '/my-properties': (context) => const MyPropertiesScreen(),
             '/received-requests': (context) => const ReceivedRequestsScreen(),
-            '/profile': (context) {
-              final userProvider =
-                  Provider.of<UserProvider>(context, listen: false);
-              if (userProvider.currentUser == null) {
-                return const LoginScreen();
-              }
-              return const ProfileScreen();
-            },
+            '/profile': (context) => Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                if (userProvider.currentUser == null) {
+                  // If user is null, redirect to LoginScreen
+                  return const LoginScreen();
+                }
+                // If user is not null, show ProfileScreen
+                return const ProfileScreen();
+              },
+            ),
             '/offers': (context) => const OffersScreen(),
             '/settings': (context) => const SettingsScreen(),
           },
