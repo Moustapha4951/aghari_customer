@@ -545,17 +545,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // إضافة دالة لرفع الصورة وإرسال الطلب
   Future<bool> _submitSellerRequest(File receiptImage) async {
+    // Access UserProvider here since _userProvider field is removed
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // Ensure currentUser is not null before accessing its properties
+    if (userProvider.currentUser == null) {
+      print('❌ Error: Current user is null in _submitSellerRequest.');
+      // Optionally, show an error message to the user or handle appropriately
+      return false; // Indicate failure
+    }
+    final currentUser = userProvider.currentUser!; // Safe to use ! due to the check above
+
     try {
       print('بدء عملية رفع إيصال الدفع');
-      final userId = _userProvider.currentUser!.id;
+      final userId = currentUser.id;
 
       // 1. أولاً، إنشاء المستند في Firestore بدون صورة
       print('إنشاء طلب جديد في Firestore');
       final docRef =
           await FirebaseFirestore.instance.collection('sellerRequests').add({
         'userId': userId,
-        'userName': _userProvider.currentUser!.name,
-        'userPhone': _userProvider.currentUser!.phone,
+        'userName': currentUser.name, // Use currentUser
+        'userPhone': currentUser.phone, // Use currentUser
         'requestDate': FieldValue.serverTimestamp(),
         'status': 'pending',
         'amount': '2000 أوقية قديمة',
