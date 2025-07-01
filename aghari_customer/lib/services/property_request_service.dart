@@ -81,8 +81,9 @@ class PropertyRequestService {
           print(
               'حقل propertyData موجود، النوع: ${firstData['propertyData'].runtimeType}');
           if (firstData['propertyData'] is Map) {
-            print('محتويات propertyData:');
-            (firstData['propertyData'] as Map).forEach((key, value) {
+            final Map<dynamic, dynamic> propertyDataMap = Map.from(firstData['propertyData'] as Map); // Ensure it's treated as a Map before Map.from
+            print('محتويات propertyData:'); // This print was already there
+            propertyDataMap.forEach((key, value) {
               print('  $key: ${value.runtimeType} = $value');
             });
           }
