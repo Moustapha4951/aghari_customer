@@ -50,14 +50,19 @@ class PropertyRequestService {
   }
 
   // الحصول على طلبات العقارات الخاصة بمستخدم معين
-  Future<List<PropertyRequestModel>> getUserRequests(String userId) async {
+  Future<List<PropertyRequestModel>> getUserRequests(String userId, {int? limit}) async { // Added limit parameter
     try {
-      print('جلب طلبات العقارات للمستخدم: $userId');
-      final snapshot = await _firestore
+      print('جلب طلبات العقارات للمستخدم: $userId${limit != null ? " (limit: $limit)" : ""}');
+
+      Query query = _firestore
           .collection(collectionName)
           .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
+          .orderBy('createdAt', descending: true);
+
+      if (limit != null && limit > 0) {
+        query = query.limit(limit);
+      }
+      final snapshot = await query.get();
 
       // طباعة معلومات الاستعلام للتشخيص
       print(

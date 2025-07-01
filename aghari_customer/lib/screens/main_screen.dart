@@ -8,6 +8,7 @@ import 'profile/profile_screen.dart';
 import '../localization/app_localizations.dart';
 import '../providers/property_provider.dart';
 import '../providers/user_provider.dart';
+import '../screens/auth/login_screen.dart'; // Added import
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -24,7 +25,15 @@ class _MainScreenState extends State<MainScreen> {
     const FavoritesScreen(),
     const PurchasesScreen(),
     const NotificationsScreen(),
-    const ProfileScreen(),
+    // Replaced ProfileScreen with Consumer for reactive auth check
+    Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        if (userProvider.currentUser == null) {
+          return const LoginScreen(); // Show LoginScreen if user is null
+        }
+        return const ProfileScreen(); // Show ProfileScreen if user is logged in
+      },
+    ),
   ];
 
   @override

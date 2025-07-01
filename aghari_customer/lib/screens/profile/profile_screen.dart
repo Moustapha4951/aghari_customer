@@ -295,26 +295,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     FutureBuilder<List<PropertyRequestModel>>(
                       future: _propertyRequestService
-                          .getUserRequests(user.id), // Use user.id directly
+                          .getUserRequests(user.id, limit: 5), // Added limit: 5
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              '${localizations.translate('error_loading')}: ${snapshot.error}',
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return _buildPropertyRequestsCard([]);
-                        } else {
-                          return _buildPropertyRequestsCard(snapshot.data!);
-                        }
+                        // Pass the whole snapshot and localizations to _buildPropertyRequestsCard
+                        return _buildPropertyRequestsCard(snapshot, localizations);
                       },
                     ),
                     const SizedBox(height: 30),
@@ -642,8 +626,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Widget _buildPropertyRequestsCard(List<PropertyRequestModel> requests) {
-    final localizations = AppLocalizations.of(context);
+  Widget _buildPropertyRequestsCard(AsyncSnapshot<List<PropertyRequestModel>> snapshot, AppLocalizations localizations) { // Modified signature
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 4,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(localizations.translate('property_requests'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text('0 ${localizations.translate('requests')}', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                    ],
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RequestPropertyScreen(),
+                        ),
+                      ).then((_) {
+                        // تحديث الصفحة عند العودة
+                        setState(() {});
+                      });
+                    },
+                    icon: const Icon(Icons.add, size: 18),
+                    label: Text(localizations.translate('new_request')),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            const Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (snapshot.hasError) {
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+               Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(localizations.translate('property_requests'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        // You might want to show a dash or N/A for count on error
+                        Text('- ${localizations.translate('requests')}', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                      ],
+                    ),
+                     ElevatedButton.icon(
+                        onPressed: () {
+                           Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RequestPropertyScreen(),
+                            ),
+                          ).then((_) {
+                            setState(() {});
+                          });
+                        },
+                        icon: const Icon(Icons.add, size: 18),
+                        label: Text(localizations.translate('new_request')),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
+                      ),
+                  ],
+                ),
+              ),
+              const Divider(height:1),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('${localizations.translate('error_loading')}: ${snapshot.error}', textAlign: TextAlign.center, style: TextStyle(color: Colors.red)),
+              )
+            ],
+          )
+        ),
+      );
+    }
+
+    final requests = snapshot.data ?? [];
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -743,6 +824,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return _buildRequestItem(requests[index]);
             },
           ),
+          // Add "View All" button if requests are not empty
+          if (requests.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, right: 16.0, bottom: 8.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    print('View All Property Requests tapped. Navigation to be implemented.');
+                    // Navigator.pushNamed(context, '/all-my-requests'); // Placeholder for future
+                  },
+                  // Using hardcoded string for now as per subtask instructions
+                  child: Text("View All Requests"),
+                ),
+              ),
+            ),
         ],
       ),
     );
