@@ -78,17 +78,21 @@ class PropertyRequestService {
 
         // طباعة معلومات أكثر تفصيلاً عن propertyData لتشخيص المشكلة
         if (firstData.containsKey('propertyData')) {
-          print(
-              'حقل propertyData موجود، النوع: ${firstData['propertyData'].runtimeType}');
-          if (firstData['propertyData'] is Map) {
-            final Map<dynamic, dynamic> propertyDataMap = Map.from(firstData['propertyData'] as Map); // Ensure it's treated as a Map before Map.from
-            print('محتويات propertyData:'); // This print was already there
+          print('حقل propertyData موجود، النوع: ${firstData['propertyData']?.runtimeType}'); // Added null-safe operator for runtimeType
+          final Object? propertyDataObject = firstData['propertyData']; // Get the value
+
+          if (propertyDataObject != null && propertyDataObject is Map) { // Explicit null and type check
+            final Map<dynamic, dynamic> propertyDataMap = Map<dynamic, dynamic>.from(propertyDataObject); // Create a new, explicitly typed Map
+            print('محتويات propertyData:');
             propertyDataMap.forEach((key, value) {
               print('  $key: ${value.runtimeType} = $value');
             });
+          } else {
+            // Log if propertyDataObject is null or not a map, for better diagnostics
+            print('propertyData is null or not a Map. Actual type: ${propertyDataObject?.runtimeType}');
           }
         } else {
-          print('حقل propertyData غير موجود في البيانات');
+          print('حقل propertyData غير موجود في البيانات'); // This else was already there
         }
       }
 
