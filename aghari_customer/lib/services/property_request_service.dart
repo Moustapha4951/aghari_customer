@@ -81,32 +81,46 @@ class PropertyRequestService {
           print('حقل propertyData موجود، النوع: ${firstData['propertyData']?.runtimeType}'); // Added null-safe operator for runtimeType
           final Object? propertyDataObject = firstData['propertyData']; // Get the value
 
-          if (propertyDataObject != null && propertyDataObject is Map) { // Explicit null and type check
-            final Map<dynamic, dynamic> propertyDataMap = Map<dynamic, dynamic>.from(propertyDataObject); // Create a new, explicitly typed Map
-            print('محتويات propertyData:');
+          if (propertyDataObject != null && propertyDataObject is Map<String, dynamic>) {
+            final Map<String, dynamic> propertyDataMap = propertyDataObject;
+            print('محتويات propertyData (Map<String, dynamic>):');
             propertyDataMap.forEach((key, value) {
-              print('  $key: ${value.runtimeType} = $value');
+              print('  $key: ${value?.runtimeType} = $value');
             });
-          } else {
+          } else if (propertyDataObject != null && propertyDataObject is Map) {
+            // Fallback for Map<dynamic, dynamic> if the more specific cast fails, though less likely with Firestore.
+            final Map<dynamic, dynamic> propertyDataMap = Map<dynamic, dynamic>.from(propertyDataObject);
+            print('محتويات propertyData (Map<dynamic, dynamic>):');
+            propertyDataMap.forEach((key, value) {
+              print('  $key: ${value?.runtimeType} = $value');
+            });
+          }
+          else {
             // Log if propertyDataObject is null or not a map, for better diagnostics
             print('propertyData is null or not a Map. Actual type: ${propertyDataObject?.runtimeType}');
           }
         } else {
-          print('حقل propertyData غير موجود في البيانات'); // This else was already there
+          print('حقل propertyData غير موجود في البيانات');
         }
       }
 
       final requests = snapshot.docs.map((doc) {
-        final data = doc.data();
+        // IMPORTANT: Ensure 'data' is cast to Map<String, dynamic> if it's not already.
+        // Firebase's doc.data() can return Map<String, dynamic>? or similar.
+        final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         print('\n--- معالجة الوثيقة: ${doc.id} ---');
 
         // التحقق من وجود propertyData وتحويله بشكل صحيح
         Map<String, dynamic> propertyData = {};
         if (data.containsKey('propertyData')) {
           print(
-              'الوثيقة تحتوي على حقل propertyData، النوع: ${data['propertyData'].runtimeType}');
-          if (data['propertyData'] is Map) {
-            propertyData = Map<String, dynamic>.from(data['propertyData']);
+              'الوثيقة تحتوي على حقل propertyData، النوع: ${data['propertyData']?.runtimeType}'); // Added null-safe operator
+          if (data['propertyData'] is Map<String, dynamic>) {
+            propertyData = data['propertyData'] as Map<String, dynamic>;
+            print('تم تحويل propertyData إلى Map<String, dynamic> بنجاح');
+          } else if (data['propertyData'] is Map) {
+            // Handle cases where it might be Map<dynamic, dynamic>
+            propertyData = Map<String, dynamic>.from(data['propertyData'] as Map);
             print('تم تحويل propertyData إلى Map بنجاح');
           } else {
             print(
@@ -139,7 +153,8 @@ class PropertyRequestService {
 
         try {
           print('بدء تحويل البيانات إلى PropertyRequestModel');
-          final request = PropertyRequestModel.fromMap(doc.data(), doc.id);
+          // Use the already typed 'data' variable
+          final request = PropertyRequestModel.fromMap(data, doc.id);
           print('تم التحويل بنجاح: ${request.propertyType}');
           return request;
         } catch (e) {
