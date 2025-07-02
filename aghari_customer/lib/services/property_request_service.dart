@@ -81,21 +81,13 @@ class PropertyRequestService {
           print('حقل propertyData موجود، النوع: ${firstData['propertyData']?.runtimeType}'); // Added null-safe operator for runtimeType
           final Object? propertyDataObject = firstData['propertyData']; // Get the value
 
-          if (propertyDataObject != null && propertyDataObject is Map<String, dynamic>) {
-            final Map<String, dynamic> propertyDataMap = propertyDataObject;
-            print('محتويات propertyData (Map<String, dynamic>):');
-            propertyDataMap.forEach((key, value) {
-              print('  $key: ${value?.runtimeType} = $value');
-            });
-          } else if (propertyDataObject != null && propertyDataObject is Map) {
-            // Fallback for Map<dynamic, dynamic> if the more specific cast fails, though less likely with Firestore.
-            final Map<dynamic, dynamic> propertyDataMap = Map<dynamic, dynamic>.from(propertyDataObject);
-            print('محتويات propertyData (Map<dynamic, dynamic>):');
-            propertyDataMap.forEach((key, value) {
-              print('  $key: ${value?.runtimeType} = $value');
-            });
-          }
-          else {
+          if (propertyDataObject != null && propertyDataObject is Map) {
+            // Simplified diagnostic: Just print that it's a map and its runtime type.
+            // Avoid iterating here to prevent the specific "forEach isn't defined for Object?" error.
+            print('propertyData is a Map. RuntimeType: ${propertyDataObject.runtimeType}');
+            // If you still need to see the keys for debugging, you could try:
+            // print('propertyData keys: ${(propertyDataObject as Map).keys}');
+          } else {
             // Log if propertyDataObject is null or not a map, for better diagnostics
             print('propertyData is null or not a Map. Actual type: ${propertyDataObject?.runtimeType}');
           }
