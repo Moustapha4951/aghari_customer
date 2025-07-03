@@ -46,9 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.currentUser;
 
-    // Get UserProvider with listening enabled
-    final userProvider = Provider.of<UserProvider>(context);
-    final user = userProvider.currentUser;
+    // The second declaration of userProvider and user was here and is now removed.
 
     if (user == null) {
       // Display a "Please log in" message and a login button
