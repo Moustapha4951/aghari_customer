@@ -68,33 +68,7 @@ class PropertyRequestService {
       print(
           'تم استرداد ${snapshot.docs.length} وثيقة من Firestore للمستخدم: $userId');
 
-      if (snapshot.docs.isNotEmpty) {
-        // طباعة محتوى أول وثيقة للتشخيص
-        final firstData = snapshot.docs.first.data();
-        print('نموذج بيانات طلب عقار:');
-        firstData.forEach((key, value) {
-          print('$key: ${value.runtimeType} = $value');
-        });
-
-        // طباعة معلومات أكثر تفصيلاً عن propertyData لتشخيص المشكلة
-        if (firstData.containsKey('propertyData')) {
-          print('حقل propertyData موجود، النوع: ${firstData['propertyData']?.runtimeType}'); // Added null-safe operator for runtimeType
-          final Object? propertyDataObject = firstData['propertyData']; // Get the value
-
-          if (propertyDataObject != null && propertyDataObject is Map) {
-            // Simplified diagnostic: Just print that it's a map and its runtime type.
-            // Avoid iterating here to prevent the specific "forEach isn't defined for Object?" error.
-            print('propertyData is a Map. RuntimeType: ${propertyDataObject.runtimeType}');
-            // If you still need to see the keys for debugging, you could try:
-            // print('propertyData keys: ${(propertyDataObject as Map).keys}');
-          } else {
-            // Log if propertyDataObject is null or not a map, for better diagnostics
-            print('propertyData is null or not a Map. Actual type: ${propertyDataObject?.runtimeType}');
-          }
-        } else {
-          print('حقل propertyData غير موجود في البيانات');
-        }
-      }
+      // The entire 'if (snapshot.docs.isNotEmpty)' block, which was for diagnostics, is removed.
 
       final requests = snapshot.docs.map((doc) {
         // IMPORTANT: Ensure 'data' is cast to Map<String, dynamic> if it's not already.
