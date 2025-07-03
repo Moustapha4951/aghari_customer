@@ -46,23 +46,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.currentUser;
 
-    // The route guard in main.dart should prevent ProfileScreen from being built if user is null.
-    // However, adding a null check here for safety during transition or unexpected states.
+    // Get UserProvider with listening enabled
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.currentUser;
+
     if (user == null) {
-      // This should ideally not be reached if the route guard is working.
-      // It might indicate a brief moment where user becomes null while widget is still in tree.
+      // Display a "Please log in" message and a login button
       return Scaffold(
-        appBar: AppBar(title: Text(localizations.translate('profile'))),
-        body: Center(child: CircularProgressIndicator()),
+        appBar: AppBar(
+          title: Text(localizations.translate('profile')),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.person_off_outlined, size: 80, color: Colors.grey[400]),
+                const SizedBox(height: 20),
+                Text(
+                  localizations.translate('please_login_to_view_profile'),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.grey[700]),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.login),
+                  label: Text(localizations.translate('login')),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
+    // If user is not null, build the profile UI
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.translate('profile')),
       ),
       body: SafeArea(
-        // Removed user == null check here, body is now directly the SingleChildScrollView
         child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
