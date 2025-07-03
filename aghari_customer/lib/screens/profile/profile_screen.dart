@@ -45,6 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Get UserProvider with listening enabled
     final userProvider = Provider.of<UserProvider>(context);
     final user = userProvider.currentUser;
+    // Diagnostic print
+    print('[ProfileScreen build] Building. User is: ${user?.id ?? 'null'}');
 
     // The second declaration of userProvider and user was here and is now removed.
 

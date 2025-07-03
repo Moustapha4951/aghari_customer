@@ -269,7 +269,7 @@ class UserProvider extends ChangeNotifier {
       await prefs.remove('userId');
 
       // يمكن إضافة منطق لإزالة معرف المستخدم من المزودات الأخرى هنا أيضًا
-
+      print('[UserProvider] logout - About to notifyListeners. User is now null.');
       notifyListeners();
     } catch (e) {
       print('خطأ في تسجيل الخروج: $e');
@@ -410,6 +410,7 @@ class UserProvider extends ChangeNotifier {
       await prefs.setString('userId', _currentUser!.id);
 
       // تحديث واجهة المستخدم
+      print('[UserProvider] setCurrentUser - About to notifyListeners. User: ${_currentUser!.id}');
       notifyListeners();
 
       // تسجيل توكن الإشعارات للمستخدم

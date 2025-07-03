@@ -57,6 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
             await userProvider.setCurrentUser(userData); // Added await
             print('✅ تم تعيين المستخدم في UserProvider');
 
+            // Add a very short delay to allow the notification to propagate
+            await Future.delayed(const Duration(milliseconds: 100));
+
             // مشاركة معرف المستخدم مع المزودين الآخرين بشكل آمن
             try {
               print('🔄 مشاركة معرف المستخدم مع المزودين الآخرين...');
