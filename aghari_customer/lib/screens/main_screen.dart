@@ -25,17 +25,8 @@ class _MainScreenState extends State<MainScreen> {
     const FavoritesScreen(),
     const PurchasesScreen(),
     const NotificationsScreen(),
-    // Replaced ProfileScreen with Consumer for reactive auth check
-    Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        // Diagnostic print
-        print('[MainScreen Profile Tab Consumer] Building. User is: ${userProvider.currentUser?.id ?? 'null'}');
-        if (userProvider.currentUser == null) {
-          return const LoginScreen(); // Show LoginScreen if user is null
-        }
-        return const ProfileScreen(); // Show ProfileScreen if user is logged in
-      },
-    ),
+    // ProfileScreen is now responsible for its own display logic based on auth state.
+    const ProfileScreen(),
   ];
 
   @override
