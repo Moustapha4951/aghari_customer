@@ -97,7 +97,7 @@ class PropertyRequestService {
       }
 
       final requests = snapshot.docs.map((doc) {
-        final data = doc.data();
+        final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         print('\n--- معالجة الوثيقة: ${doc.id} ---');
 
         // التحقق من وجود propertyData وتحويله بشكل صحيح
