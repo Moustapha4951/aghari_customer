@@ -139,7 +139,7 @@ class PropertyRequestService {
 
         try {
           print('بدء تحويل البيانات إلى PropertyRequestModel');
-          final request = PropertyRequestModel.fromMap(doc.data(), doc.id);
+          final request = PropertyRequestModel.fromMap(data, doc.id);
           print('تم التحويل بنجاح: ${request.propertyType}');
           return request;
         } catch (e) {
