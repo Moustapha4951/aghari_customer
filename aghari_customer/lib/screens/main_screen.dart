@@ -26,7 +26,13 @@ class _MainScreenState extends State<MainScreen> {
     const PurchasesScreen(),
     const NotificationsScreen(),
     // ProfileScreen is now responsible for its own display logic based on auth state.
-    const ProfileScreen(),
+    // It's wrapped in a Consumer to get the authStateChangeSignal for its key.
+    Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        // The diagnostic print previously here is removed as ProfileScreen has its own.
+        return ProfileScreen(key: ValueKey<int>(userProvider.authStateChangeSignal));
+      }
+    ),
   ];
 
   @override
