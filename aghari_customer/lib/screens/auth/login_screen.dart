@@ -58,39 +58,33 @@ class _LoginScreenState extends State<LoginScreen> {
             print('✅ تم تعيين المستخدم في UserProvider');
 
             // Add a very short delay to allow the notification to propagate
-            // await Future.delayed(const Duration(milliseconds: 100)); // Temporarily commented out
+            await Future.delayed(const Duration(milliseconds: 100));
 
             // مشاركة معرف المستخدم مع المزودين الآخرين بشكل آمن
-            // try { // Temporarily commented out
-            //   print('🔄 مشاركة معرف المستخدم مع المزودين الآخرين...');
-            //   userProvider.setUserIdInProviders(context);
+            try {
+              print('🔄 مشاركة معرف المستخدم مع المزودين الآخرين...');
+              userProvider.setUserIdInProviders(context);
 
-            //   // تحميل المفضلات مباشرة
-            //   final propertyProvider =
-            //       Provider.of<PropertyProvider>(context, listen: false);
-            //   print('🔄 تحميل المفضلات بعد تسجيل الدخول...');
-            //   await propertyProvider.forceReloadFavorites(userData['id']);
-            //   print('✅ تم تحميل المفضلات بنجاح');
-            // } catch (e) {
-            //   print('⚠️ خطأ في مشاركة معرف المستخدم أو تحميل المفضلات: $e');
-            //   // الاستمرار في العملية رغم الخطأ
-            // }
-
-            // التحقق من شاشة الترحيب
-            // final prefs = await SharedPreferences.getInstance(); // Temporarily commented out
-            // final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false); // Temporarily commented out
-
-            // if (isFirstLogin && mounted) { // Temporarily commented out
-            //   Navigator.pushReplacementNamed(context, '/welcome');
-            // } else {
-            //   Navigator.pushReplacementNamed(context, '/main');
-            // }
-
-            // Navigate directly to /main for this diagnostic step
-            if (mounted) {
-              Navigator.pushReplacementNamed(context, '/main');
+              // تحميل المفضلات مباشرة
+              final propertyProvider =
+                  Provider.of<PropertyProvider>(context, listen: false);
+              print('🔄 تحميل المفضلات بعد تسجيل الدخول...');
+              await propertyProvider.forceReloadFavorites(userData['id']);
+              print('✅ تم تحميل المفضلات بنجاح');
+            } catch (e) {
+              print('⚠️ خطأ في مشاركة معرف المستخدم أو تحميل المفضلات: $e');
+              // الاستمرار في العملية رغم الخطأ
             }
 
+            // التحقق من شاشة الترحيب
+            final prefs = await SharedPreferences.getInstance();
+            final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false);
+
+            if (isFirstLogin && mounted) {
+              Navigator.pushReplacementNamed(context, '/welcome');
+            } else {
+              Navigator.pushReplacementNamed(context, '/main');
+            }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
             // في حالة حدوث خطأ، انتقل إلى الشاشة الرئيسية

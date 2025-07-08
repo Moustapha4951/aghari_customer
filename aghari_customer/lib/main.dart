@@ -116,7 +116,11 @@ class MyApp extends StatelessWidget {
             '/': (context) => const SplashScreen(),
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterScreen(),
-            '/main': (context) => const MainScreen(),
+            '/main': (context) => Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    return MainScreen(key: ValueKey<int>(userProvider.authStateChangeSignal));
+                  }
+                ),
             '/welcome': (context) => const WelcomeScreen(),
             '/seller-welcome': (context) => const BecomeSellerWelcomeScreen(),
             '/request-property': (context) => const RequestPropertyScreen(),
