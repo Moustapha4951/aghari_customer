@@ -395,35 +395,43 @@ class UserProvider extends ChangeNotifier {
   }
 
   // إضافة دالة لتعيين بيانات المستخدم الحالي من خدمة المصادقة
-  Future<void> setCurrentUser(Map<String, dynamic> userData) async { // Changed signature to Future<void>
+  Future<void> setCurrentUser(Map<String, dynamic> userData) async {
+    UserModel? tempUser;
     try {
-      // تحويل البيانات إلى نموذج المستخدم
-      _currentUser = UserModel(
+      // 1. Create the UserModel instance
+      tempUser = UserModel(
         id: userData['id'],
         name: userData['name'] ?? '',
         phone: userData['phone'] ?? '',
-        password: '', // لا تخزن كلمة المرور في الذاكرة
+        password: '', // Do not store password in memory
         imageUrl: userData['profileImageUrl'],
         isSeller: userData['isSeller'] ?? false,
       );
 
-      // حفظ معرف المستخدم في التخزين المحلي
+      // 2. Perform all related await operations using data from the new UserModel
       final prefs = await _prefs;
-      await prefs.setString('userId', _currentUser!.id);
+      await prefs.setString('userId', tempUser.id);
 
-      // تحديث واجهة المستخدم
-      authStateChangeSignal++; // Increment signal
-      print('[UserProvider] setCurrentUser - About to notifyListeners. User: ${_currentUser!.id}, Signal: $authStateChangeSignal');
+      // Save notification token (moved before setting _currentUser and notifying)
+      await NotificationService().saveUserToken(tempUser.id);
+
+      // 3. Only after all operations are successful, assign to _currentUser
+      _currentUser = tempUser;
+
+      // 4. Then, increment authStateChangeSignal
+      authStateChangeSignal++;
+      print('[UserProvider] setCurrentUser - SUCCESS - About to notifyListeners. User: ${_currentUser!.id}, Signal: $authStateChangeSignal');
+
+      // 5. Finally, call notifyListeners()
       notifyListeners();
 
-      // تسجيل توكن الإشعارات للمستخدم
-      await NotificationService().saveUserToken(_currentUser!.id);
-
       print('تم تعيين المستخدم الحالي: ${_currentUser!.name}');
+
     } catch (e) {
       print('خطأ في تعيين المستخدم الحالي: $e');
-      // في حالة حدوث خطأ، تأكد من عدم وجود مستخدم محلي
-      _currentUser = null;
+      _currentUser = null; // Set to null on error
+      authStateChangeSignal++; // Increment signal even on error if state changes to null
+      print('[UserProvider] setCurrentUser - ERROR - About to notifyListeners. User is null. Signal: $authStateChangeSignal');
       notifyListeners();
     }
   }
