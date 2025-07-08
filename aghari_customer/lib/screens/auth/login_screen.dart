@@ -80,15 +80,23 @@ class _LoginScreenState extends State<LoginScreen> {
             final prefs = await SharedPreferences.getInstance();
             final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false);
 
-            if (isFirstLogin && mounted) {
-              Navigator.pushReplacementNamed(context, '/welcome');
-            } else {
-              Navigator.pushReplacementNamed(context, '/main');
+            if (mounted) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (isFirstLogin) {
+                  Navigator.pushReplacementNamed(context, '/welcome');
+                } else {
+                  Navigator.pushReplacementNamed(context, '/main');
+                }
+              });
             }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
             // في حالة حدوث خطأ، انتقل إلى الشاشة الرئيسية
-            if (mounted) Navigator.pushReplacementNamed(context, '/main'); // Keep this fallback
+            if (mounted) { // Ensure mounted check here too for safety
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pushReplacementNamed(context, '/main');
+                });
+            }
           }
         } else {
           throw 'فشل تسجيل الدخول: البيانات فارغة';
