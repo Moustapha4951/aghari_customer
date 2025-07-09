@@ -70,7 +70,7 @@ class PropertyRequestService {
 
       if (snapshot.docs.isNotEmpty) {
         // طباعة محتوى أول وثيقة للتشخيص
-        final firstData = snapshot.docs.first.data();
+        final Map<String, dynamic> firstData = snapshot.docs.first.data() as Map<String, dynamic>;
         print('نموذج بيانات طلب عقار:');
         firstData.forEach((key, value) {
           print('$key: ${value.runtimeType} = $value');
