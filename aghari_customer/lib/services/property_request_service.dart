@@ -162,8 +162,8 @@ class PropertyRequestService {
       final doc =
           await _firestore.collection(collectionName).doc(requestId).get();
       if (doc.exists) {
-        final data = doc.data() as Map<String, dynamic>;
-        return PropertyRequestModel.fromMap(data, doc.id);
+        return PropertyRequestModel.fromMap(
+            doc.data() as Map<String, dynamic>, doc.id);
       }
       return null;
     } catch (e) {
