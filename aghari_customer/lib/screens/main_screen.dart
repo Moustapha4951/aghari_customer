@@ -19,6 +19,24 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  Map<String, dynamic>? _passedUserData; // To store arguments
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments = ModalRoute.of(context)?.settings.arguments;
+      if (arguments != null && arguments is Map<String, dynamic>) {
+        _passedUserData = arguments;
+        if (_passedUserData != null) {
+          print('[MainScreen initState] Received user data via arguments: ${_passedUserData!['id']}');
+          // Force update UserProvider with this data.
+          // UserProvider.setCurrentUser will handle signal increment and notifyListeners.
+          Provider.of<UserProvider>(context, listen: false).setCurrentUser(_passedUserData!);
+        }
+      }
+    });
+  }
 
   final List<Widget> _screens = [
     const HomeScreen(),

@@ -85,7 +85,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (isFirstLogin) {
                   Navigator.pushReplacementNamed(context, '/welcome');
                 } else {
-                  Navigator.pushReplacementNamed(context, '/main');
+                  // Pass userData as arguments
+                  Navigator.pushReplacementNamed(context, '/main', arguments: userData);
                 }
               });
             }
@@ -94,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // في حالة حدوث خطأ، انتقل إلى الشاشة الرئيسية
             if (mounted) { // Ensure mounted check here too for safety
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                    // Do not pass arguments on error, as userData might be null or incomplete
                     Navigator.pushReplacementNamed(context, '/main');
                 });
             }
