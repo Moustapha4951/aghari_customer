@@ -1,70 +1,40 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
-
-# Define jobs for building the Flutter application
-jobs:
-  build-android:
-    docker:
-      - image: cimg/android:2023.08-flutter
-    steps:
-      - checkout
-      - restore_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-      - run:
-          name: Install Flutter dependencies
-          command: cd aghari_customer && flutter pub get
-      - save_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-          paths:
-            - aghari_customer/.dart_tool
-            - aghari_customer/.pub-cache
-      - run:
-          name: Flutter analyze
-          command: cd aghari_customer && flutter analyze
-      - run:
-          name: Flutter build APK
-          command: cd aghari_customer && flutter build apk --release
-      - store_artifacts:
-          path: aghari_customer/build/app/outputs/flutter-apk/app-release.apk
-          destination: app-release.apk
-
-  build-ios:
+executors:
+  macos-executor:
     macos:
-      xcode: 15.0.0
+      xcode: 15.2.0
+    working_directory: ~/project
+jobs:
+  build_and_deploy:
+    executor: macos-executor
+    environment:
+      FASTLANE_USER: $FASTLANE_USER
+      FASTLANE_PASSWORD: $FASTLANE_PASSWORD
+      DEVELOPMENT_TEAM: $DEVELOPMENT_TEAM
     steps:
       - checkout
-      - restore_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-      - restore_cache:
-          key: pods-{{ checksum "aghari_customer/ios/Podfile.lock" }}
       - run:
-          name: Install Flutter dependencies
-          command: cd aghari_customer && flutter pub get
+          name: Change to iOS project directory
+          command: cd aghari_customer/ios && pwd && ls
       - run:
-          name: Install CocoaPods
+          name: Install Fastlane
+          command: cd aghari_customer/ios && sudo gem install fastlane -NV
+      - run:
+          name: Print Fastlane version
+          command: cd aghari_customer/ios && fastlane --version
+      - run:
+          name: Set up Fastlane in Xcode project directory
           command: |
             cd aghari_customer/ios
-            pod install
-      - save_cache:
-          key: flutter-dependencies-{{ checksum "aghari_customer/pubspec.lock" }}
-          paths:
-            - aghari_customer/.dart_tool
-            - aghari_customer/.pub-cache
-      - save_cache:
-          key: pods-{{ checksum "aghari_customer/ios/Podfile.lock" }}
-          paths:
-            - aghari_customer/ios/Pods
+            yes "" | fastlane init
       - run:
-          name: Flutter build iOS
-          command: cd aghari_customer && flutter build ios --release --no-codesign
-      - store_artifacts:
-          path: aghari_customer/build/ios/iphoneos
-          destination: ios-build
-
-# Orchestrate jobs using workflows
+          name: Build and upload to App Store Connect
+          command: |
+            cd aghari_customer/ios
+            bundle exec fastlane pilot upload --skip_waiting_for_build_processing true
 workflows:
-  build-and-deploy:
+  version: 2
+  build_and_deploy:
     jobs:
-      - build-android
-      - build-ios
+      - build_and_deploy:
+          context: ios-appstore-credentials
