@@ -26,13 +26,18 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final arguments = ModalRoute.of(context)?.settings.arguments;
+      // final arguments = ModalRoute.of(context)?.settings.arguments; // Removed duplicate line
       if (arguments != null && arguments is Map<String, dynamic>) {
-        _passedUserData = arguments;
-        if (_passedUserData != null) {
-          print('[MainScreen initState] Received user data via arguments: ${_passedUserData!['id']}');
-          // Force update UserProvider with this data.
-          // UserProvider.setCurrentUser will handle signal increment and notifyListeners.
-          Provider.of<UserProvider>(context, listen: false).setCurrentUser(_passedUserData!);
+        final passedUserData = arguments; // Use a local variable for clarity
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+        // Only call setCurrentUser if the user isn't already set to this ID,
+        // or if there's no current user at all. This breaks the loop.
+        if (userProvider.currentUser == null || userProvider.currentUser!.id != passedUserData['id']) {
+          print('[MainScreen initState] Received user data via arguments: ${passedUserData['id']}. Current user is ${userProvider.currentUser?.id}. Updating provider.');
+          userProvider.setCurrentUser(passedUserData);
+        } else {
+          print('[MainScreen initState] Received user data via arguments: ${passedUserData['id']}. User already set in provider. No update needed from initState.');
         }
       }
     });
