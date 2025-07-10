@@ -52,9 +52,19 @@ post_install do |installer|
       end
     end
     
+    # Set C++ standard for gRPC and related pods
+    grpc_related_pods = ['gRPC-Core', 'gRPC-C++', 'FirebaseFirestore', 'FirebaseAuth', 'FirebaseStorage', 'abseil', 'abseil-cpp'] # Added abseil-cpp as it's common
+    if grpc_related_pods.include?(target.name)
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++' # Ensure libc++ is used
+      end
+    end
+
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
-      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
+      current_target_version = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+      # Ensure deployment target is at least 12.0, but don't override if it's already higher.
+      if current_target_version.nil? || current_target_version.to_f < 12.0
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
       end
     end
