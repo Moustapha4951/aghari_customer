@@ -1,7 +1,7 @@
 name: aghari_customer
 description: A new Flutter project.
 publish_to: 'none'
-version: 1.0.1+33
+version: 1.0.1+2
 
 environment:
   sdk: '>=3.1.5 <4.0.0'
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.32.0 # Kept at latest pub.dev version, as 3.15.1 seemed anomalous
+  firebase_core: ^3.15.1 # Updated to resolve conflict with firebase_messaging
   cloud_firestore: ^5.6.11
   firebase_auth: ^5.6.2
   provider: ^6.1.1
