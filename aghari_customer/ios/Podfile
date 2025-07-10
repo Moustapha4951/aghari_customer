@@ -62,6 +62,14 @@ post_install do |installer|
     end
 
     target.build_configurations.each do |config|
+      # Add -ObjC to OTHER_LDFLAGS for the Runner target
+      if target.name == 'Runner'
+        ldflags = config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
+        unless ldflags.include?('-ObjC')
+          config.build_settings['OTHER_LDFLAGS'] << '-ObjC'
+        end
+      end
+
       current_target_version = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
       # Ensure deployment target is at least 13.0, but don't override if it's already higher.
       if current_target_version.nil? || current_target_version.to_f < 13.0
