@@ -75,20 +75,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
             // التحقق من شاشة الترحيب
             final prefs = await SharedPreferences.getInstance();
-            final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false);
+            // final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false);
 
-            if (isFirstLogin && mounted) {
-              Navigator.pushReplacementNamed(context, '/welcome');
-            } else {
-              Navigator.pushReplacementNamed(context, '/main');
+            // if (isFirstLogin && mounted) {
+            //   Navigator.pushReplacementNamed(context, '/welcome');
+            // } else {
+            //   Navigator.pushReplacementNamed(context, '/main');
+            // }
+            // Navigate to restart prompt screen instead
+            if (mounted) {
+              Navigator.pushNamedAndRemoveUntil(context, '/restart-prompt', (route) => false);
             }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
-            // في حالة حدوث خطأ، انتقل إلى الشاشة الرئيسية
-            if (mounted) Navigator.pushReplacementNamed(context, '/main');
+            // In case of an error during post-login processing,
+            // it's safer to indicate an error rather than navigating to /main or /restart-prompt
+            // For now, let's rethrow or show an error message if possible,
+            // or fall back to login screen with error.
+            // For simplicity in this step, we'll let the generic catch handle it.
+            // if (mounted) Navigator.pushReplacementNamed(context, '/main'); // Original fallback
+             if (mounted) {
+setState(() {
+                _errorMessage = localizations.translate('error_processing_login') ?? 'Error processing login: ${e.toString()}';
+                _isLoading = false;
+});
+            }
           }
         } else {
-          throw 'فشل تسجيل الدخول: البيانات فارغة';
+          throw localizations.translate('login_failed_empty_data') ?? 'Login failed: User data is empty';
         }
       } catch (e) {
         print('❌ خطأ في تسجيل الدخول: $e');
