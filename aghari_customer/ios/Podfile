@@ -32,16 +32,8 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-
-  # Explicitly add common abseil-cpp subspecs that might be needed for linking
-  # See https://github.com/firebase/firebase-ios-sdk/issues/10061 and similar issues
-  # These provide common utilities like strings, numbers, time, etc.
-  pod 'abseil-cpp/Strings', :modular_headers => true
-  pod 'abseil-cpp/Types', :modular_headers => true
-  pod 'abseil-cpp/Time', :modular_headers => true
-  pod 'abseil-cpp/Numeric', :modular_headers => true # For safe_strto* functions
-  pod 'abseil-cpp/Synchronization', :modular_headers => true # Often a core part
-  pod 'abseil-cpp/Common', :modular_headers => true # Base utilities
+  # Explicit abseil-cpp subspecs removed as they caused issues with stale pod repo.
+  # The post_install script will handle settings for abseil-cpp if it's pulled in transitively.
 
   target 'RunnerTests' do
     inherit! :search_paths
