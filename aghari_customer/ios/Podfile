@@ -32,9 +32,6 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  # Explicit abseil-cpp subspecs removed as they caused issues with stale pod repo.
-  # The post_install script will handle settings for abseil-cpp if it's pulled in transitively.
-
   target 'RunnerTests' do
     inherit! :search_paths
   end
@@ -55,51 +52,11 @@ post_install do |installer|
       end
     end
     
-    # Set C++ standard and enable modules for gRPC and related pods, especially Abseil
-    grpc_related_pods = ['gRPC-Core', 'gRPC-C++', 'FirebaseFirestore', 'FirebaseAuth', 'FirebaseStorage', 'abseil', 'abseil-cpp']
-    if grpc_related_pods.include?(target.name)
-      target.build_configurations.each do |config|
-        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
-        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
-        # Ensuring modular header use, though use_modular_headers! should also cover this
-        config.build_settings['DEFINES_MODULE'] = 'YES'
-        # Address potential linker issues with C++ static libraries in Xcode 14+
-        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
-      end
-    end
-
-    # This loop needs to be separate to ensure settings are applied to all configs of all targets
-    # The previous combined loop might not apply settings correctly if a target is not in grpc_related_pods
-    # but still needs the -ObjC or IPHONEOS_DEPLOYMENT_TARGET settings.
-    # However, the -ObjC is for Runner only, and IPHONEOS_DEPLOYMENT_TARGET is for all.
-    # Let's apply Runner-specific and then general settings.
-
-    if target.name == 'Runner'
-      target.build_configurations.each do |config|
-        # Add -ObjC to OTHER_LDFLAGS for the Runner target
-        ldflags = config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
-        unless ldflags.include?('-ObjC')
-          config.build_settings['OTHER_LDFLAGS'] << '-ObjC'
-        end
-      end
-    end
-
-    # Apply IPHONEOS_DEPLOYMENT_TARGET to all targets
     target.build_configurations.each do |config|
-      # Add -ObjC to OTHER_LDFLAGS for the Runner target
-      if target.name == 'Runner'
-        ldflags = config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
-        unless ldflags.include?('-ObjC')
-          config.build_settings['OTHER_LDFLAGS'] << '-ObjC'
-        end
-      end
-
-      current_target_version = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
-      # Ensure deployment target is at least 13.0, but don't override if it's already higher.
-      if current_target_version.nil? || current_target_version.to_f < 13.0
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
       end
     end
   end
-end 
+end
