@@ -32,6 +32,17 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Explicitly add common abseil-cpp subspecs that might be needed for linking
+  # See https://github.com/firebase/firebase-ios-sdk/issues/10061 and similar issues
+  # These provide common utilities like strings, numbers, time, etc.
+  pod 'abseil-cpp/Strings', :modular_headers => true
+  pod 'abseil-cpp/Types', :modular_headers => true
+  pod 'abseil-cpp/Time', :modular_headers => true
+  pod 'abseil-cpp/Numeric', :modular_headers => true # For safe_strto* functions
+  pod 'abseil-cpp/Synchronization', :modular_headers => true # Often a core part
+  pod 'abseil-cpp/Common', :modular_headers => true # Base utilities
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
@@ -52,15 +63,35 @@ post_install do |installer|
       end
     end
     
-    # Set C++ standard for gRPC and related pods
-    grpc_related_pods = ['gRPC-Core', 'gRPC-C++', 'FirebaseFirestore', 'FirebaseAuth', 'FirebaseStorage', 'abseil', 'abseil-cpp'] # Added abseil-cpp as it's common
+    # Set C++ standard and enable modules for gRPC and related pods, especially Abseil
+    grpc_related_pods = ['gRPC-Core', 'gRPC-C++', 'FirebaseFirestore', 'FirebaseAuth', 'FirebaseStorage', 'abseil', 'abseil-cpp']
     if grpc_related_pods.include?(target.name)
       target.build_configurations.each do |config|
         config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++' # Ensure libc++ is used
+        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+        # Ensuring modular header use, though use_modular_headers! should also cover this
+        config.build_settings['DEFINES_MODULE'] = 'YES'
       end
     end
 
+    # This loop needs to be separate to ensure settings are applied to all configs of all targets
+    # The previous combined loop might not apply settings correctly if a target is not in grpc_related_pods
+    # but still needs the -ObjC or IPHONEOS_DEPLOYMENT_TARGET settings.
+    # However, the -ObjC is for Runner only, and IPHONEOS_DEPLOYMENT_TARGET is for all.
+    # Let's apply Runner-specific and then general settings.
+
+    if target.name == 'Runner'
+      target.build_configurations.each do |config|
+        # Add -ObjC to OTHER_LDFLAGS for the Runner target
+        ldflags = config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
+        unless ldflags.include?('-ObjC')
+          config.build_settings['OTHER_LDFLAGS'] << '-ObjC'
+        end
+      end
+    end
+
+    # Apply IPHONEOS_DEPLOYMENT_TARGET to all targets
     target.build_configurations.each do |config|
       # Add -ObjC to OTHER_LDFLAGS for the Runner target
       if target.name == 'Runner'
