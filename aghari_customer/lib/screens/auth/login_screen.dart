@@ -96,13 +96,19 @@ class _LoginScreenState extends State<LoginScreen> {
             // if (mounted) Navigator.pushReplacementNamed(context, '/main'); // Original fallback
              if (mounted) {
 setState(() {
-                _errorMessage = localizations.translate('error_processing_login') ?? 'Error processing login: ${e.toString()}';
+                // Use a generic error message or e.toString() to avoid scope issue with 'localizations'
+                _errorMessage = 'Error processing login: ${e.toString()}';
                 _isLoading = false;
 });
             }
           }
         } else {
-          throw localizations.translate('login_failed_empty_data') ?? 'Login failed: User data is empty';
+          // Use AppLocalizations.of(context) if context is available and needed, or a generic string
+          // For this catch block, a generic string is safer if localizations isn't easily accessible.
+          final String genericLoginFailedError = "Login failed: User data is empty"; // Default
+          // Attempt to get localized version if context were available, but it's not directly in this path.
+          // So, we rely on the outer catch for localized messages from AuthService for now.
+          throw genericLoginFailedError;
         }
       } catch (e) {
         print('❌ خطأ في تسجيل الدخول: $e');
