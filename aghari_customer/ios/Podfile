@@ -64,6 +64,8 @@ post_install do |installer|
         config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
         # Ensuring modular header use, though use_modular_headers! should also cover this
         config.build_settings['DEFINES_MODULE'] = 'YES'
+        # Address potential linker issues with C++ static libraries in Xcode 14+
+        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
       end
     end
 
