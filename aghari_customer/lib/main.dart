@@ -58,8 +58,9 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ReceivedRequestsProvider()),
       ],
       child: const MyApp(),
-    ),
-  );
+    ), // Closes MultiProvider
+  ), // Closes Phoenix
+);
 }
 
 class MyApp extends StatelessWidget {
