@@ -449,9 +449,7 @@
     "delete": "Supprimer",
     "back": "Retour",
     "no_properties_available": "Aucune propriété disponible actuellement",
-    "restart_required_title": "Redémarrage requis",
-    "restart_required_message": "Pour garantir que toutes vos données sont correctement chargées, veuillez redémarrer l'application.",
-    "restart_app_button": "Redémarrer l'application",
     "error_processing_login": "Erreur lors du traitement de la connexion",
-    "login_failed_empty_data": "Échec de la connexion : les données utilisateur sont vides"
+    "login_failed_empty_data": "Échec de la connexion : les données utilisateur sont vides",
+    "continue_as_guest": "Continuer en tant qu'invité"
 }

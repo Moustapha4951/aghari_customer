@@ -91,4 +91,32 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
+  // دالة تسجيل الدخول كمستخدم مجهول (زائر)
+  Future<Map<String, dynamic>> signInAnonymously() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      const guestId = 'GUEST_USER_ID';
+      const guestName = 'Guest'; // Or use a localized string later
+
+      // حفظ بيانات الزائر في التخزين المحلي
+      await prefs.setString('userId', guestId);
+      await prefs.setString('userName', guestName);
+      await prefs.setString('userPhone', ''); // No phone for guest
+
+      print('تم تسجيل الدخول كزائر بنجاح: $guestId');
+
+      // إرجاع بيانات الزائر
+      return {
+        'id': guestId,
+        'name': guestName,
+        'phone': '',
+        'isSeller': false,
+        'profileImageUrl': null,
+      };
+    } catch (e) {
+      print('خطأ في تسجيل الدخول كزائر: $e');
+      throw 'Failed to sign in as guest.';
+    }
+  }
 }

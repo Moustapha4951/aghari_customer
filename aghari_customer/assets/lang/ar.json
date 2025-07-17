@@ -486,9 +486,7 @@
     "uploading_image": "جاري رفع الصورة",
     "saving_property_data": "جاري حفظ بيانات العقار...",
     "property_saved_successfully": "تم حفظ العقار بنجاح!",
-    "restart_required_title": "إعادة تشغيل مطلوبة",
-    "restart_required_message": "لضمان تحميل جميع بياناتك بشكل صحيح، يرجى إعادة تشغيل التطبيق.",
-    "restart_app_button": "إعادة تشغيل التطبيق",
     "error_processing_login": "خطأ في معالجة تسجيل الدخول",
-    "login_failed_empty_data": "فشل تسجيل الدخول: بيانات المستخدم فارغة"
+    "login_failed_empty_data": "فشل تسجيل الدخول: بيانات المستخدم فارغة",
+    "continue_as_guest": "المتابعة كزائر"
 }

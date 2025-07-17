@@ -73,8 +73,17 @@ class _SplashScreenState extends State<SplashScreen> {
           }
         }
         
-        // التغيير هنا: عرض شاشة الترحيب دائماً بدلاً من التحقق
-        if (mounted) Navigator.pushReplacementNamed(context, '/welcome');
+        // Check if the user has seen the welcome screen before
+        final prefs = await SharedPreferences.getInstance();
+        final hasSeenWelcome = prefs.getBool('has_seen_welcome') ?? false;
+
+        if (!hasSeenWelcome) {
+          // If it's the first time, navigate to welcome screen
+          if (mounted) Navigator.pushReplacementNamed(context, '/welcome');
+        } else {
+          // If they have seen it, navigate to the main app screen, fixing the loop.
+          if (mounted) Navigator.pushReplacementNamed(context, '/main');
+        }
         
       } else {
         // المستخدم غير مسجل، توجيهه إلى شاشة تسجيل الدخول

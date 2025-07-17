@@ -82,9 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
             // } else {
             //   Navigator.pushReplacementNamed(context, '/main');
             // }
-            // Navigate to restart prompt screen instead
+            // Automatically restart the app instead of navigating
             if (mounted) {
-              Navigator.pushNamedAndRemoveUntil(context, '/restart-prompt', (route) => false);
+              Phoenix.rebirth(context);
             }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
@@ -118,6 +118,32 @@ setState(() {
             _isLoading = false;
           });
         }
+      }
+    }
+  }
+
+  void _loginAnonymously(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final userData = await _authService.signInAnonymously();
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.setCurrentUser(userData);
+      userProvider.setUserIdInProviders(context);
+
+      // For anonymous login, no need to check for welcome screen, go straight to main
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/main');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
       }
     }
   }
@@ -252,6 +278,14 @@ setState(() {
                         ? null
                         : () => Navigator.pushNamed(context, '/register'),
                     child: Text(localizations.translate('no_account')),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _isLoading ? null : () => _loginAnonymously(context),
+                    child: Text(
+                      localizations.translate('continue_as_guest') ?? 'Continue as Guest',
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    ),
                   ),
                 ],
               ),

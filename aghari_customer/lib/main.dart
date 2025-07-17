@@ -32,7 +32,7 @@ import 'services/notification_service.dart';
 import 'screens/settings/settings_screen.dart';
 import 'screens/profile/become_seller_screen.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'screens/auth/restart_prompt_screen.dart'; // Import for the new screen
+// No longer need to import restart_prompt_screen
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -149,7 +149,6 @@ class MyApp extends StatelessWidget {
             },
             '/offers': (context) => const OffersScreen(),
             '/settings': (context) => const SettingsScreen(),
-            '/restart-prompt': (context) => const RestartPromptScreen(), // Added route
           },
         );
       },
