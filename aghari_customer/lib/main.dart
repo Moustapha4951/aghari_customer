@@ -32,7 +32,6 @@ import 'services/notification_service.dart';
 import 'screens/settings/settings_screen.dart';
 import 'screens/profile/become_seller_screen.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-// No longer need to import restart_prompt_screen
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,17 +49,17 @@ Future<void> main() async {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => PropertyProvider()),
-        ChangeNotifierProvider(create: (_) => PropertyRequestProvider()),
-        ChangeNotifierProvider(create: (_) => PropertyPurchaseProvider()),
-        ChangeNotifierProvider(create: (_) => OfferProvider()),
-        ChangeNotifierProvider(create: (_) => LanguageProvider()),
-        ChangeNotifierProvider(create: (_) => ReceivedRequestsProvider()),
-      ],
-      child: const MyApp(),
-    ), // Closes MultiProvider
-  ), // Closes Phoenix
-);
+          ChangeNotifierProvider(create: (_) => PropertyProvider()),
+          ChangeNotifierProvider(create: (_) => PropertyRequestProvider()),
+          ChangeNotifierProvider(create: (_) => PropertyPurchaseProvider()),
+          ChangeNotifierProvider(create: (_) => OfferProvider()),
+          ChangeNotifierProvider(create: (_) => LanguageProvider()),
+          ChangeNotifierProvider(create: (_) => ReceivedRequestsProvider()),
+        ],
+        child: const MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
