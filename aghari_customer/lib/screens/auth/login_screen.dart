@@ -74,33 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
               // الاستمرار في العملية رغم الخطأ
             }
 
-            // التحقق من شاشة الترحيب
-            final prefs = await SharedPreferences.getInstance();
-            // final isFirstLogin = !(prefs.getBool('has_seen_welcome') ?? false);
-
-            // if (isFirstLogin && mounted) {
-            //   Navigator.pushReplacementNamed(context, '/welcome');
-            // } else {
-            //   Navigator.pushReplacementNamed(context, '/main');
-            // }
             // Automatically restart the app instead of navigating
             if (mounted) {
               Phoenix.rebirth(context);
             }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
-            // In case of an error during post-login processing,
-            // it's safer to indicate an error rather than navigating to /main or /restart-prompt
-            // For now, let's rethrow or show an error message if possible,
-            // or fall back to login screen with error.
-            // For simplicity in this step, we'll let the generic catch handle it.
-            // if (mounted) Navigator.pushReplacementNamed(context, '/main'); // Original fallback
              if (mounted) {
-setState(() {
+               setState(() {
                 // Use a generic error message or e.toString() to avoid scope issue with 'localizations'
                 _errorMessage = 'Error processing login: ${e.toString()}';
                 _isLoading = false;
-});
+               });
             }
           }
         } else {
