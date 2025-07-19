@@ -35,8 +35,10 @@ class _SplashScreenState extends State<SplashScreen> {
         final notificationService = NotificationService();
         await notificationService.checkForMissedNotifications(userProvider.currentUser!.id);
         
-        // معالجة إشعارات قبول/رفض البائع
+        // Get SharedPreferences instance once and reuse it.
         final prefs = await SharedPreferences.getInstance();
+
+        // معالجة إشعارات قبول/رفض البائع
         final isSellerApproved = prefs.getBool('is_seller_approved') ?? false;
         final isSellerRejected = prefs.getBool('is_seller_rejected') ?? false;
         
@@ -66,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             // إزالة الحالة بعد عرضها
             await prefs.setBool('is_seller_rejected', false);
 
-      if (mounted) {
+            if (mounted) {
               _showRejectionDialog(reason);
               return;
             }
@@ -74,7 +76,6 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         
         // Check if the user has seen the welcome screen before
-        final prefs = await SharedPreferences.getInstance();
         final hasSeenWelcome = prefs.getBool('has_seen_welcome') ?? false;
 
         if (!hasSeenWelcome) {
@@ -255,4 +256,3 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
