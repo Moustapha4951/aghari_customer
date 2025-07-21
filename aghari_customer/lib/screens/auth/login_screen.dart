@@ -74,24 +74,26 @@ class _LoginScreenState extends State<LoginScreen> {
               // الاستمرار في العملية رغم الخطأ
             }
 
-            // Automatically restart the app instead of navigating
+            // Navigate to the profile screen and then restart the app
             if (mounted) {
+              Navigator.pushReplacementNamed(context, '/profile');
               Phoenix.rebirth(context);
             }
           } catch (e) {
             print('❌ خطأ في معالجة تسجيل الدخول: $e');
-             if (mounted) {
-               setState(() {
+            if (mounted) {
+              setState(() {
                 // Use a generic error message or e.toString() to avoid scope issue with 'localizations'
                 _errorMessage = 'Error processing login: ${e.toString()}';
                 _isLoading = false;
-               });
+              });
             }
           }
         } else {
           // Use AppLocalizations.of(context) if context is available and needed, or a generic string
           // For this catch block, a generic string is safer if localizations isn't easily accessible.
-          final String genericLoginFailedError = "Login failed: User data is empty"; // Default
+          final String genericLoginFailedError =
+              "Login failed: User data is empty"; // Default
           // Attempt to get localized version if context were available, but it's not directly in this path.
           // So, we rely on the outer catch for localized messages from AuthService for now.
           throw genericLoginFailedError;
